@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,9 +11,14 @@ public class PlayerController : MonoBehaviour
     private float RunSpeed = 5;
     [SerializeField]
     float RotationSpeed = 1;
+
     private float currentSpeed;
 
     private Camera MainCamera;
+
+    private IInteractable currentInteract;
+    private IHoldInteractable currentHoldInteract;
+
     public void Awake()
     {
         MainCamera = Camera.main;
@@ -40,6 +44,30 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (currentHoldInteract != null)
+        {
+            if (context.started)
+            {
+                currentHoldInteract.BeginHold();
+            }
+            else if (context.canceled)
+            {
+                currentHoldInteract.EndHold();
+            }
+
+            return;
+        }
+
+        if (context.performed && currentInteract != null)
+        {
+            currentInteract.Interact();
+            currentInteract = null;
+        }
+    }
+
+
     public void Update()
     {
         Vector3 cameraForward = MainCamera.transform.forward;
@@ -53,11 +81,43 @@ public class PlayerController : MonoBehaviour
 
         Rb.linearVelocity = new Vector3(moveDirection.x * currentSpeed, Rb.linearVelocity.y, moveDirection.z * currentSpeed);
 
+
         if (moveDirection.sqrMagnitude > 0.01f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
 
             Rb.MoveRotation(Quaternion.Slerp(Rb.rotation, targetRotation, RotationSpeed * Time.fixedDeltaTime));
+        }
+
+        if (currentHoldInteract != null)
+        {
+            currentHoldInteract.UpdateHold(Time.deltaTime);
+        }
+    }
+
+    public void SetInteractable(IInteractable interactable)
+    {
+        currentInteract = interactable;
+    }
+
+    public void RemoveInteractable(IInteractable interactable)
+    {
+        if (currentInteract == interactable)
+        {
+            currentInteract = null;
+        }
+    }
+
+    public void SetHoldInteractable(IHoldInteractable interactable)
+    {
+        currentHoldInteract = interactable;
+    }
+
+    public void RemoveHoldInteractable(IHoldInteractable interactable)
+    {
+        if (currentHoldInteract == interactable)
+        {
+            currentHoldInteract = null;
         }
     }
 }

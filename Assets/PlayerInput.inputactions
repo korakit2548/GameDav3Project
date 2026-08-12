@@ -25,38 +25,16 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Look",
-                    "type": "Value",
-                    "id": "051d0e9f-667c-47be-925c-3d0cc8dadf32",
-                    "expectedControlType": "Vector2",
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "5426745c-f04a-4989-b811-005ba5d85664",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
-                {
-                    "name": "",
-                    "id": "62760608-bef9-4ac4-826f-cfa81d19ffac",
-                    "path": "<Gamepad>/rightStick",
-                    "interactions": "",
-                    "processors": "ScaleVector2(x=100,y=100)",
-                    "groups": ";Gamepad",
-                    "action": "Look",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "37dadd87-fd23-4449-bfb9-5a7ea56707fc",
-                    "path": "<Pointer>/delta",
-                    "interactions": "",
-                    "processors": "DeltaTimeScale,ScaleVector2(x=0.1,y=0.1)",
-                    "groups": ";Keyboard&Mouse;Keyboard",
-                    "action": "Look",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
                 {
                     "name": "2D Vector",
                     "id": "1595f832-c190-47fe-b910-5278c2494d1a",
@@ -111,6 +89,17 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "c7d4ab5d-325e-4ecd-b382-16898bc168c8",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
