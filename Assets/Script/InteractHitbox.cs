@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 public class InteractHitbox : MonoBehaviour
@@ -11,11 +12,19 @@ public class InteractHitbox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Trigger Enter: " + other.gameObject.name);
+        IInteractable interactable = other.GetComponentInParent<IInteractable>();
 
-        IInteractable interactable = other.GetComponent<IInteractable>();
+        if (interactable == null)
+        {
+            interactable = other.GetComponentInChildren<IInteractable>();
+        }
 
-        IHoldInteractable holdInteractable = other.GetComponent<IHoldInteractable>();
+        IHoldInteractable holdInteractable = other.GetComponentInParent<IHoldInteractable>();
+
+        if (holdInteractable == null)
+        {
+            holdInteractable = other.GetComponentInChildren<IHoldInteractable>();
+        }
 
         if (interactable != null)
         {
@@ -26,15 +35,38 @@ public class InteractHitbox : MonoBehaviour
         {
             player.SetHoldInteractable(holdInteractable);
         }
+
+        if (interactable != null || holdInteractable != null)
+        {
+            InteractHighlight highlight = other.GetComponentInParent<InteractHighlight>();
+
+            if (highlight == null)
+            {
+                highlight = other.GetComponentInChildren<InteractHighlight>();
+            }
+
+            if (highlight != null)
+            {
+                highlight.SetHighlight(true);
+            }
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        IInteractable interactable =
-            other.GetComponent<IInteractable>();
+        IInteractable interactable = other.GetComponentInParent<IInteractable>();
 
-        IHoldInteractable holdInteractable =
-            other.GetComponent<IHoldInteractable>();
+        if (interactable == null)
+        {
+            interactable = other.GetComponentInChildren<IInteractable>();
+        }
+
+        IHoldInteractable holdInteractable = other.GetComponentInParent<IHoldInteractable>();
+
+        if (holdInteractable == null)
+        {
+            holdInteractable = other.GetComponentInChildren<IHoldInteractable>();
+        }
 
         if (interactable != null)
         {
@@ -44,6 +76,21 @@ public class InteractHitbox : MonoBehaviour
         if (holdInteractable != null)
         {
             player.RemoveHoldInteractable(holdInteractable);
+        }
+
+        if (interactable != null || holdInteractable != null)
+        {
+            InteractHighlight highlight = other.GetComponentInParent<InteractHighlight>();
+
+            if (highlight == null)
+            {
+                highlight = other.GetComponentInChildren<InteractHighlight>();
+            }
+
+            if (highlight != null)
+            {
+                highlight.SetHighlight(false);
+            }
         }
     }
 }
