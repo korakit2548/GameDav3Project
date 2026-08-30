@@ -41,9 +41,16 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
 
     private void DestroyObject()
     {
-        Debug.Log("ทำลาย Object สำเร็จ!");
+        Debug.Log("Object Destroyed!");
 
         isHolding = false;
+
+        ObjectiveManager objectiveManager = FindFirstObjectByType<ObjectiveManager>();
+
+        if (objectiveManager != null)
+        {
+            objectiveManager.ObjectDestroyed(gameObject);
+        }
 
         Destroy(gameObject);
     }

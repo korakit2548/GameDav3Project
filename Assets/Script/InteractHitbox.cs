@@ -1,4 +1,3 @@
-
 using UnityEngine;
 
 public class InteractHitbox : MonoBehaviour
@@ -31,12 +30,29 @@ public class InteractHitbox : MonoBehaviour
             player.SetInteractable(interactable);
         }
 
+        bool canInteract = false;
+
         if (holdInteractable != null)
         {
-            player.SetHoldInteractable(holdInteractable);
+            if (other.CompareTag("Dirty") &&
+                player.GetCurrentTool() == CleaningTool.Mop)
+            {
+                canInteract = true;
+            }
+
+            if (other.CompareTag("Trash") &&
+                player.GetCurrentTool() == CleaningTool.Broom)
+            {
+                canInteract = true;
+            }
+
+            if (canInteract)
+            {
+                player.SetHoldInteractable(holdInteractable);
+            }
         }
 
-        if (interactable != null || holdInteractable != null)
+        if (interactable != null || canInteract)
         {
             InteractHighlight highlight = other.GetComponentInParent<InteractHighlight>();
 
@@ -78,7 +94,8 @@ public class InteractHitbox : MonoBehaviour
             player.RemoveHoldInteractable(holdInteractable);
         }
 
-        if (interactable != null || holdInteractable != null)
+        if (interactable != null ||
+            holdInteractable != null)
         {
             InteractHighlight highlight = other.GetComponentInParent<InteractHighlight>();
 

@@ -5,10 +5,13 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody Rb;
     private Vector2 moveInput;
+
     [SerializeField]
     private float NormalSpeed = 5;
+
     [SerializeField]
     private float RunSpeed = 5;
+
     [SerializeField]
     float RotationSpeed = 1;
 
@@ -19,19 +22,24 @@ public class PlayerController : MonoBehaviour
     private IInteractable currentInteract;
     private IHoldInteractable currentHoldInteract;
 
+    [SerializeField]
+    private CleaningTool currentTool = CleaningTool.Mop;
+
+
     public void Awake()
     {
         MainCamera = Camera.main;
 
         Rb = GetComponent<Rigidbody>();
-        currentSpeed = NormalSpeed;
-    }
 
+        currentSpeed = NormalSpeed;
+
+        Debug.Log("Current Tool: " + currentTool);
+    }
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
     }
-
     public void OnRun(InputAction.CallbackContext context)
     {
         if (context.performed)
@@ -43,7 +51,6 @@ public class PlayerController : MonoBehaviour
             currentSpeed = NormalSpeed;
         }
     }
-
     public void OnInteract(InputAction.CallbackContext context)
     {
         if (currentHoldInteract != null)
@@ -63,30 +70,81 @@ public class PlayerController : MonoBehaviour
         if (context.performed && currentInteract != null)
         {
             currentInteract.Interact();
+
             currentInteract = null;
         }
+    }
+
+    public void OnChangeTool(InputAction.CallbackContext context)
+    {
+        if (!context.performed)
+            return;
+
+        currentHoldInteract = null;
+
+        currentInteract = null;
+
+
+        if (currentTool == CleaningTool.Mop)
+        {
+            currentTool = CleaningTool.Broom;
+        }
+        else
+        {
+            currentTool = CleaningTool.Mop;
+        }
+
+        Debug.Log("Current Tool: " + currentTool);
+    }
+
+    public CleaningTool GetCurrentTool()
+    {
+        return currentTool;
     }
 
 
     public void Update()
     {
-        Vector3 cameraForward = MainCamera.transform.forward;
-        Vector3 cameraRight = MainCamera.transform.right;
+        Vector3 cameraForward =
+            MainCamera.transform.forward;
+
+        Vector3 cameraRight =
+            MainCamera.transform.right;
+
         cameraForward.y = 0f;
+
         cameraRight.y = 0f;
+
         cameraForward.Normalize();
+
         cameraRight.Normalize();
 
-        Vector3 moveDirection = cameraForward * moveInput.y + cameraRight * moveInput.x;
 
-        Rb.linearVelocity = new Vector3(moveDirection.x * currentSpeed, Rb.linearVelocity.y, moveDirection.z * currentSpeed);
+        Vector3 moveDirection =
+            cameraForward * moveInput.y +
+            cameraRight * moveInput.x;
+
+
+        Rb.linearVelocity =
+            new Vector3(
+                moveDirection.x * currentSpeed,
+                Rb.linearVelocity.y,
+                moveDirection.z * currentSpeed
+            );
 
 
         if (moveDirection.sqrMagnitude > 0.01f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            Quaternion targetRotation =Quaternion.LookRotation(moveDirection);
 
-            Rb.MoveRotation(Quaternion.Slerp(Rb.rotation, targetRotation, RotationSpeed * Time.fixedDeltaTime));
+            Rb.MoveRotation(
+                Quaternion.Slerp(
+                    Rb.rotation,
+                    targetRotation,
+                    RotationSpeed *
+                    Time.fixedDeltaTime
+                )
+            );
         }
 
         if (currentHoldInteract != null)
@@ -118,6 +176,32 @@ public class PlayerController : MonoBehaviour
         if (currentHoldInteract == interactable)
         {
             currentHoldInteract = null;
+        }
+    }
+    public void OnFullscreen(InputAction.CallbackContext context)
+    {
+        if (!context.performed)
+            return;
+
+        if (Screen.fullScreenMode == FullScreenMode.Windowed)
+        {
+            Screen.SetResolution(
+                Screen.currentResolution.width,
+                Screen.currentResolution.height,
+                FullScreenMode.FullScreenWindow
+            );
+
+            Debug.Log("Fullscreen: ON");
+        }
+        else
+        {
+            Screen.SetResolution(
+                1280,
+                720,
+                FullScreenMode.Windowed
+            );
+
+            Debug.Log("Fullscreen: OFF");
         }
     }
 }
