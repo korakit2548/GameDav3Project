@@ -177,31 +177,5 @@ public class PlayerController : MonoBehaviour
         {
             currentHoldInteract = null;
         }
-    }
-    public void OnFullscreen(InputAction.CallbackContext context)
-    {
-        if (!context.performed)
-            return;
-
-        if (Screen.fullScreenMode == FullScreenMode.Windowed)
-        {
-            Screen.SetResolution(
-                Screen.currentResolution.width,
-                Screen.currentResolution.height,
-                FullScreenMode.FullScreenWindow
-            );
-
-            Debug.Log("Fullscreen: ON");
-        }
-        else
-        {
-            Screen.SetResolution(
-                1280,
-                720,
-                FullScreenMode.Windowed
-            );
-
-            Debug.Log("Fullscreen: OFF");
-        }
-    }
+    }   
 }
