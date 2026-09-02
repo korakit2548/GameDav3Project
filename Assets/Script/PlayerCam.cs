@@ -18,11 +18,9 @@ public class PlayerCam : MonoBehaviour
         Time.timeScale = 1f;
 
         pausePanel.SetActive(false);
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-
 
     public void Update()
     {
@@ -32,11 +30,9 @@ public class PlayerCam : MonoBehaviour
         }
     }
 
-
     private void TogglePause()
     {
         isPaused = !isPaused;
-
 
         if (isPaused)
         {
@@ -61,7 +57,6 @@ public class PlayerCam : MonoBehaviour
             Debug.Log("Game Resumed");
         }
     }
-
 
     public void GoToMainMenu()
     {

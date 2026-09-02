@@ -12,7 +12,6 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
     {
         currentTime = 0f;
         isHolding = true;
-
         Debug.Log("เริ่มทำลาย");
     }
 
@@ -24,7 +23,6 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
         currentTime += deltaTime;
 
         Debug.Log("กำลังทำลาย: " + currentTime);
-
         if (currentTime >= destroyTime)
         {
             DestroyObject();
@@ -42,7 +40,6 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
     private void DestroyObject()
     {
         Debug.Log("Object Destroyed!");
-
         isHolding = false;
 
         ObjectiveManager objectiveManager = FindFirstObjectByType<ObjectiveManager>();
@@ -51,7 +48,6 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
         {
             objectiveManager.ObjectDestroyed(gameObject);
         }
-
         Destroy(gameObject);
     }
 }
