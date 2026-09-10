@@ -8,10 +8,12 @@ public class ObjectiveManager : MonoBehaviour
     private int totalTrash;
     private int remainingTrash;
 
+    [SerializeField]
+    private EnemySpawner enemySpawner;
     private void Start()
     {
+        
         totalDirty = GameObject.FindGameObjectsWithTag("Dirty").Length;
-
         totalTrash = GameObject.FindGameObjectsWithTag("Trash").Length;
 
         remainingDirty = totalDirty;
@@ -26,13 +28,14 @@ public class ObjectiveManager : MonoBehaviour
         if (target.CompareTag("Dirty"))
         {
             remainingDirty--;
-
+            enemySpawner.ForceNextSpawn();
             Debug.Log("Dirty: " +remainingDirty +" / " +totalDirty);
         }
 
         if (target.CompareTag("Trash"))
         {
             remainingTrash--;
+            enemySpawner.ForceNextSpawn();
 
             Debug.Log("Trash: " +remainingTrash +" / " +totalTrash);
         }

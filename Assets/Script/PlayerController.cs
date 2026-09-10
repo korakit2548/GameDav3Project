@@ -11,11 +11,18 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private float RunSpeed = 5;
+    private float currentSpeed;
 
     [SerializeField]
     float RotationSpeed = 1;
 
-    private float currentSpeed;
+    [SerializeField]
+    float maxSanity = 100;
+    private float currentSanity;
+
+    [SerializeField]
+    private GameOverUI gameOverUI;
+    private bool isGameOver;
 
     private Camera MainCamera;
 
@@ -33,7 +40,7 @@ public class PlayerController : MonoBehaviour
         Rb = GetComponent<Rigidbody>();
 
         currentSpeed = NormalSpeed;
-
+        currentSanity = maxSanity;
         Debug.Log("Current Tool: " + currentTool);
     }
     public void OnMove(InputAction.CallbackContext context)
@@ -177,5 +184,35 @@ public class PlayerController : MonoBehaviour
         {
             currentHoldInteract = null;
         }
-    }   
+    }
+    public void TakeSanityDamage(float damage)
+    {
+        if (isGameOver)
+            return;
+
+        currentSanity -= damage;
+
+        if (currentSanity <= 0f)
+        {
+            currentSanity = 0f;
+            GameOver();
+            return;
+        }
+        Debug.Log("Sanity: " + currentSanity + " / " + maxSanity);
+    }
+    public float GetSanity()
+    {
+        return currentSanity;
+    }
+    private void GameOver()
+    {
+        isGameOver = true;
+
+        Rb.linearVelocity = Vector3.zero;
+
+        if (gameOverUI != null)
+        {
+            gameOverUI.ShowGameOver();
+        }
+    }
 }

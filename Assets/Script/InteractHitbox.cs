@@ -34,14 +34,12 @@ public class InteractHitbox : MonoBehaviour
 
         if (holdInteractable != null)
         {
-            if (other.CompareTag("Dirty") &&
-                player.GetCurrentTool() == CleaningTool.Mop)
+            if (other.CompareTag("Dirty") && player.GetCurrentTool() == CleaningTool.Mop)
             {
                 canInteract = true;
             }
 
-            if (other.CompareTag("Trash") &&
-                player.GetCurrentTool() == CleaningTool.Broom)
+            if ((other.CompareTag("Trash") || other.CompareTag("CursedTrash")) && player.GetCurrentTool() == CleaningTool.Broom)
             {
                 canInteract = true;
             }

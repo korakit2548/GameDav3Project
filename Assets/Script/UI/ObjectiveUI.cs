@@ -9,17 +9,24 @@ public class ObjectiveUI : MonoBehaviour
     [SerializeField]
     private TMP_Text trashText;
 
+    [SerializeField]
+    private GameCompleteUI gameCompleteUI;
+
     private ObjectiveManager objectiveManager;
+
+    private bool isComplete;
 
     private void Start()
     {
-        objectiveManager = FindFirstObjectByType<ObjectiveManager>();
-
+        objectiveManager =
+            FindFirstObjectByType<ObjectiveManager>();
         UpdateUI();
     }
 
     private void Update()
     {
+        if (isComplete)
+            return;
         UpdateUI();
     }
 
@@ -29,21 +36,27 @@ public class ObjectiveUI : MonoBehaviour
             return;
 
         int remainingDirty = objectiveManager.GetRemainingDirty();
-
         int remainingTrash = objectiveManager.GetRemainingTrash();
 
-        if (remainingDirty <= 0 &&
-            remainingTrash <= 0)
-        {
-            dirtyText.text = "Objective Complete";
+        int totalDirty = objectiveManager.GetTotalDirty();
+        int totalTrash = objectiveManager.GetTotalTrash();
 
+        if (totalDirty + totalTrash > 0 && remainingDirty <= 0 && remainingTrash <= 0)
+        {
+            isComplete = true;
+
+            dirtyText.text = "Objective Complete";
             trashText.text = "";
+
+            if (gameCompleteUI != null)
+            {
+                gameCompleteUI.ShowComplete();
+            }
 
             return;
         }
 
-        dirtyText.text = "Dirty  " + remainingDirty + " / " + objectiveManager.GetTotalDirty();
-
-        trashText.text = "Trash  " + remainingTrash + " / " + objectiveManager.GetTotalTrash();
+        dirtyText.text = "Dirty  " + remainingDirty + " / " + totalDirty;
+        trashText.text = "Trash  " + remainingTrash + " / " + totalTrash;
     }
 }
