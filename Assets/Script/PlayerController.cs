@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private CleaningTool currentTool = CleaningTool.Mop;
 
+    private float gameOverDelay = 0.2f;
 
     public void Awake()
     {
@@ -54,6 +55,7 @@ public class PlayerController : MonoBehaviour
         currentSanity = maxSanity;
         Debug.Log("Current Tool: " + currentTool);
     }
+
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
@@ -126,33 +128,17 @@ public class PlayerController : MonoBehaviour
 
     public void Update()
     {
-        Vector3 cameraForward =
-            MainCamera.transform.forward;
-
-        Vector3 cameraRight =
-            MainCamera.transform.right;
+        Vector3 cameraForward = MainCamera.transform.forward;
+        Vector3 cameraRight = MainCamera.transform.right;
 
         cameraForward.y = 0f;
-
         cameraRight.y = 0f;
-
         cameraForward.Normalize();
-
         cameraRight.Normalize();
 
+        Vector3 moveDirection = cameraForward * moveInput.y + cameraRight * moveInput.x;
 
-        Vector3 moveDirection =
-            cameraForward * moveInput.y +
-            cameraRight * moveInput.x;
-
-
-        Rb.linearVelocity =
-            new Vector3(
-                moveDirection.x * currentSpeed,
-                Rb.linearVelocity.y,
-                moveDirection.z * currentSpeed
-            );
-
+        Rb.linearVelocity = new Vector3(moveDirection.x * currentSpeed, Rb.linearVelocity.y, moveDirection.z * currentSpeed);
 
         if (moveDirection.sqrMagnitude > 0.01f)
         {
@@ -171,6 +157,16 @@ public class PlayerController : MonoBehaviour
         if (currentHoldInteract != null)
         {
             currentHoldInteract.UpdateHold(Time.deltaTime);
+        }
+
+        if (currentSanity <= 0f && !isGameOver)
+        {
+            gameOverDelay -= Time.deltaTime;
+
+            if (gameOverDelay <= 0f)
+            {
+                GameOver();
+            }
         }
     }
 
@@ -209,7 +205,6 @@ public class PlayerController : MonoBehaviour
         if (currentSanity <= 0f)
         {
             currentSanity = 0f;
-            GameOver();
             return;
         }
         Debug.Log("Sanity: " + currentSanity + " / " + maxSanity);

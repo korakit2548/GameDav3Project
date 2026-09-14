@@ -59,7 +59,7 @@ public class Room : MonoBehaviour
     private float warningTime = 1f;
     private float warningTimer;
     private bool isWarning;
-
+    private bool CursedImmediately;
     private void Update()
     {
         if (!isWarning)
@@ -102,7 +102,7 @@ public class Room : MonoBehaviour
 
         //Debug.Log("Player เข้า " + gameObject.name);
 
-        if (currentState == RoomState.Cursed)
+        if (currentState == RoomState.Cursed && !CursedImmediately)
         {
             player.TakeSanityDamage(instantDamage);
             player.BigShake();
@@ -134,6 +134,7 @@ public class Room : MonoBehaviour
 
         warningTimer = warningTime;
         isWarning = true;
+        CursedImmediately = false;
 
         SpawnCursedTrash();
         SetRoomLight(WarningLightColor);
@@ -144,12 +145,7 @@ public class Room : MonoBehaviour
         isWarning = false;
 
         SetCursed();
-        //Debug.Log(gameObject.name + " Warning จบ");
-    }
-    public void SetCursed()
-    {
-        currentState = RoomState.Cursed;
-        SetRoomLight(cursedLightColor);
+
         if (playerInside && player != null)
         {
             if (instantDamageCoroutine != null)
@@ -159,19 +155,21 @@ public class Room : MonoBehaviour
 
             instantDamageCoroutine = StartCoroutine(InstantDamageAfterDelay());
         }
-        //Debug.Log(gameObject.name + " Cursed");
+    }
+    public void SetCursed()
+    {
+        currentState = RoomState.Cursed;
+        SetRoomLight(cursedLightColor);
     }
     public void StartCursedImmediately()
     {
-        currentState = RoomState.Cursed;
-
-        SetRoomLight(cursedLightColor);
-
-        //Debug.Log(gameObject.name + " Cursed ทันที เพราะ Player อยู่ในห้อง" );
+        SetCursed();
+        CursedImmediately = true;
         if (cursedDamageCoroutine != null)
         {
             StopCoroutine(cursedDamageCoroutine);
         }
+
         cursedDamageCoroutine = StartCoroutine(CursedDamageOvertime());
     }
     public void SetNormal()

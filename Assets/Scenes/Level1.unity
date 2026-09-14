@@ -3211,8 +3211,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   roomManager: {fileID: 86180561}
   enemyPrefab: {fileID: 0}
-  SetSpawnInterval: 10
-  SetspawnChance: 0.4
+  SetSpawnInterval: 8
+  SetspawnChance: 0.5
   ReduceTime: 2
 --- !u!1 &1016898655
 GameObject:
