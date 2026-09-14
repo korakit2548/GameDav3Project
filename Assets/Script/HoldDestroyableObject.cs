@@ -5,6 +5,9 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
     [SerializeField]
     private float destroyTime = 2f;
 
+    [SerializeField]
+    private CleaningBar cleaningBar;
+
     private float currentTime;
     private bool isHolding;
     private bool isDestroyed;
@@ -17,7 +20,9 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
         currentTime = 0f;
         isHolding = true;
 
-        Debug.Log("เริ่มทำลาย");
+        cleaningBar.SetProgress(0f);
+
+        //Debug.Log("เริ่มทำลาย");
     }
 
     public void UpdateHold(float deltaTime)
@@ -27,7 +32,8 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
 
         currentTime += deltaTime;
 
-        Debug.Log("กำลังทำลาย: " + currentTime);
+        float progress = currentTime / destroyTime;
+        cleaningBar.SetProgress(progress);
 
         if (currentTime >= destroyTime)
         {
@@ -43,7 +49,9 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
         isHolding = false;
         currentTime = 0f;
 
-        Debug.Log("หยุดทำลาย");
+        cleaningBar.SetProgress(0f);
+
+        //Debug.Log("หยุดทำลาย");
     }
 
     private void DestroyObject()
@@ -54,8 +62,7 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
         isDestroyed = true;
         isHolding = false;
 
-        CursedTrash cursedTrash =
-            GetComponent<CursedTrash>();
+        CursedTrash cursedTrash = GetComponent<CursedTrash>();
 
         if (cursedTrash != null)
         {

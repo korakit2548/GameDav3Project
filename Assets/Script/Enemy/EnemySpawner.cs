@@ -9,19 +9,18 @@ public class EnemySpawner : MonoBehaviour
     private GameObject enemyPrefab;
 
     [SerializeField]
-    private float spawnInterval = 5f;
+    private float SetSpawnInterval;
 
     [SerializeField]
-    private float SetspawnChance = 0.5f;
+    private float SetspawnChance;
     private float spawnChance;
     private float spawnTimer;
 
-    private bool forceNextSpawn;
-
-
+    [SerializeField]
+    private float ReduceTime = 2.0f;
     private void Start()
     {
-        spawnTimer = spawnInterval;
+        spawnTimer = SetSpawnInterval;
         spawnChance = SetspawnChance;
     }
 
@@ -34,21 +33,13 @@ public class EnemySpawner : MonoBehaviour
         {
             CheckSpawn();
 
-            spawnTimer = spawnInterval;
+            spawnTimer = SetSpawnInterval;
         }
     }
 
 
     private void CheckSpawn()
     {
-        if (forceNextSpawn)
-        {
-            forceNextSpawn = false;
-
-            SpawnEnemy();
-
-            return;
-        }
 
         float randomValue = Random.value;
 
@@ -90,9 +81,10 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    public void ForceNextSpawn()
+    public void ReduceTimeNextSpawn()
     {
-        forceNextSpawn = true;
-        Debug.Log("การทำความสะอาดสำเร็จ ? Enemy รอบถัดไปจะเกิดแน่นอน");
+        spawnTimer = Mathf.Max(0f, spawnTimer - ReduceTime);
+        Debug.Log("Spawn Interval ปัจจุบัน: " + spawnTimer + " วินาที");
+
     }
 }

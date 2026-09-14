@@ -9,14 +9,15 @@ public class InteractHighlight : MonoBehaviour
     [SerializeField]
     private Color highlightColor = Color.red;
 
+    [SerializeField]
+    private GameObject highlightLabel;
+
     private void Awake()
     {
         objectRenderer = GetComponentInChildren<Renderer>();
 
         if (objectRenderer == null)
-        {
             return;
-        }
 
         material = objectRenderer.material;
 
@@ -28,25 +29,36 @@ public class InteractHighlight : MonoBehaviour
         {
             originalColor = material.GetColor("_Color");
         }
+
+        if (highlightLabel != null)
+        {
+            highlightLabel.SetActive(false);
+        }
     }
+
     public void SetHighlight(bool active)
     {
         if (material == null)
-        {
             return;
-        }
 
         if (material.HasProperty("_BaseColor"))
         {
-            if (active)
-            {
-                material.SetColor("_BaseColor", Color.red);
-            }
-            else
-            {
-                material.SetColor("_BaseColor", originalColor);
-            }
+            material.SetColor(
+                "_BaseColor",
+                active ? highlightColor : originalColor
+            );
+        }
+        else if (material.HasProperty("_Color"))
+        {
+            material.SetColor(
+                "_Color",
+                active ? highlightColor : originalColor
+            );
+        }
+
+        if (highlightLabel != null)
+        {
+            highlightLabel.SetActive(active);
         }
     }
 }
-

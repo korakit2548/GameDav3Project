@@ -1,10 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using Unity.Cinemachine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody Rb;
     private Vector2 moveInput;
+    [SerializeField]
+    private InteractHitbox interactHitbox;
 
     [SerializeField]
     private float NormalSpeed = 5;
@@ -23,6 +25,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private GameOverUI gameOverUI;
     private bool isGameOver;
+
+    [SerializeField]
+    private CinemachineImpulseSource impulseSource;
+
+    [SerializeField]
+    private float bigShakeForce = 1f;
+
+    [SerializeField]
+    private float smallShakeForce = 0.2f;
 
     private Camera MainCamera;
 
@@ -87,11 +98,11 @@ public class PlayerController : MonoBehaviour
         if (!context.performed)
             return;
 
-        currentHoldInteract = null;
-
-        currentInteract = null;
-
-
+        if (currentHoldInteract != null)
+        {
+            currentHoldInteract.EndHold();
+            currentHoldInteract = null;
+        }
         if (currentTool == CleaningTool.Mop)
         {
             currentTool = CleaningTool.Broom;
@@ -100,15 +111,18 @@ public class PlayerController : MonoBehaviour
         {
             currentTool = CleaningTool.Mop;
         }
-
         Debug.Log("Current Tool: " + currentTool);
+
+        if (interactHitbox != null)
+        {
+            interactHitbox.RefreshTool();
+        }
     }
 
     public CleaningTool GetCurrentTool()
     {
         return currentTool;
     }
-
 
     public void Update()
     {
@@ -199,6 +213,20 @@ public class PlayerController : MonoBehaviour
             return;
         }
         Debug.Log("Sanity: " + currentSanity + " / " + maxSanity);
+    }
+    public void BigShake()
+    {
+        if (impulseSource != null)
+        {
+            impulseSource.GenerateImpulse(bigShakeForce);
+        }
+    }
+    public void SmallShake()
+    {
+        if (impulseSource != null)
+        {
+            impulseSource.GenerateImpulse(smallShakeForce);
+        }
     }
     public float GetSanity()
     {

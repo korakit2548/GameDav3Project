@@ -28,14 +28,14 @@ public class ObjectiveManager : MonoBehaviour
         if (target.CompareTag("Dirty"))
         {
             remainingDirty--;
-            enemySpawner.ForceNextSpawn();
+            enemySpawner.ReduceTimeNextSpawn();
             Debug.Log("Dirty: " +remainingDirty +" / " +totalDirty);
         }
 
         if (target.CompareTag("Trash"))
         {
             remainingTrash--;
-            enemySpawner.ForceNextSpawn();
+            enemySpawner.ReduceTimeNextSpawn();
 
             Debug.Log("Trash: " +remainingTrash +" / " +totalTrash);
         }

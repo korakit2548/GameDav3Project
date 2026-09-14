@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InteractHitbox : MonoBehaviour
 {
     private PlayerController player;
+
+    private HashSet<Collider> currentColliders = new HashSet<Collider>();
 
     private void Awake()
     {
@@ -11,63 +14,15 @@ public class InteractHitbox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        IInteractable interactable = other.GetComponentInParent<IInteractable>();
+        currentColliders.Add(other);
 
-        if (interactable == null)
-        {
-            interactable = other.GetComponentInChildren<IInteractable>();
-        }
-
-        IHoldInteractable holdInteractable = other.GetComponentInParent<IHoldInteractable>();
-
-        if (holdInteractable == null)
-        {
-            holdInteractable = other.GetComponentInChildren<IHoldInteractable>();
-        }
-
-        if (interactable != null)
-        {
-            player.SetInteractable(interactable);
-        }
-
-        bool canInteract = false;
-
-        if (holdInteractable != null)
-        {
-            if (other.CompareTag("Dirty") && player.GetCurrentTool() == CleaningTool.Mop)
-            {
-                canInteract = true;
-            }
-
-            if ((other.CompareTag("Trash") || other.CompareTag("CursedTrash")) && player.GetCurrentTool() == CleaningTool.Broom)
-            {
-                canInteract = true;
-            }
-
-            if (canInteract)
-            {
-                player.SetHoldInteractable(holdInteractable);
-            }
-        }
-
-        if (interactable != null || canInteract)
-        {
-            InteractHighlight highlight = other.GetComponentInParent<InteractHighlight>();
-
-            if (highlight == null)
-            {
-                highlight = other.GetComponentInChildren<InteractHighlight>();
-            }
-
-            if (highlight != null)
-            {
-                highlight.SetHighlight(true);
-            }
-        }
+        RefreshCollider(other);
     }
 
     private void OnTriggerExit(Collider other)
     {
+        currentColliders.Remove(other);
+
         IInteractable interactable = other.GetComponentInParent<IInteractable>();
 
         if (interactable == null)
@@ -92,20 +47,80 @@ public class InteractHitbox : MonoBehaviour
             player.RemoveHoldInteractable(holdInteractable);
         }
 
-        if (interactable != null ||
-            holdInteractable != null)
+        InteractHighlight highlight = other.GetComponentInParent<InteractHighlight>();
+
+        if (highlight == null)
         {
-            InteractHighlight highlight = other.GetComponentInParent<InteractHighlight>();
-
-            if (highlight == null)
+            highlight = other.GetComponentInChildren<InteractHighlight>();
+        }
+        if (highlight != null)
+        {
+            highlight.SetHighlight(false);
+        }
+    }
+    public void RefreshTool()
+    {
+        foreach (Collider other in currentColliders)
+        {
+            if (other != null)
             {
-                highlight = other.GetComponentInChildren<InteractHighlight>();
+                RefreshCollider(other);
+            }
+        }
+    }
+    private void RefreshCollider(Collider other)
+    {
+        IInteractable interactable = other.GetComponentInParent<IInteractable>();
+
+        if (interactable == null)
+        {
+            interactable = other.GetComponentInChildren<IInteractable>();
+        }
+
+        IHoldInteractable holdInteractable = other.GetComponentInParent<IHoldInteractable>();
+
+        if (holdInteractable == null)
+        {
+            holdInteractable = other.GetComponentInChildren<IHoldInteractable>();
+        }
+        if (interactable != null)
+        {
+            player.SetInteractable(interactable);
+        }
+
+        bool canInteract = false;
+
+        if (holdInteractable != null)
+        {
+            if (other.CompareTag("Dirty") && player.GetCurrentTool() == CleaningTool.Mop)
+            {
+                canInteract = true;
             }
 
-            if (highlight != null)
+            if ((other.CompareTag("Trash") || other.CompareTag("CursedTrash")) && player.GetCurrentTool() == CleaningTool.Broom)
             {
-                highlight.SetHighlight(false);
+                canInteract = true;
             }
+
+            if (canInteract)
+            {
+                player.SetHoldInteractable(holdInteractable);
+            }
+            else
+            {
+                player.RemoveHoldInteractable(holdInteractable);
+            }
+        }
+
+        InteractHighlight highlight = other.GetComponentInParent<InteractHighlight>();
+
+        if (highlight == null)
+        {
+            highlight = other.GetComponentInChildren<InteractHighlight>();
+        }
+        if (highlight != null)
+        {
+            highlight.SetHighlight(interactable != null || canInteract);
         }
     }
 }
