@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour
     private IHoldInteractable currentHoldInteract;
 
     [SerializeField]
-    private CleaningTool currentTool = CleaningTool.Mop;
+    private CleaningTool currentTool = CleaningTool.sponge;
 
     private float gameOverDelay = 0.2f;
 
@@ -105,13 +105,13 @@ public class PlayerController : MonoBehaviour
             currentHoldInteract.EndHold();
             currentHoldInteract = null;
         }
-        if (currentTool == CleaningTool.Mop)
+        if (currentTool == CleaningTool.sponge)
         {
             currentTool = CleaningTool.Broom;
         }
         else
         {
-            currentTool = CleaningTool.Mop;
+            currentTool = CleaningTool.sponge;
         }
         Debug.Log("Current Tool: " + currentTool);
 

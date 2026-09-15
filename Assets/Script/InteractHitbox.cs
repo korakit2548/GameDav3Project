@@ -92,7 +92,7 @@ public class InteractHitbox : MonoBehaviour
 
         if (holdInteractable != null)
         {
-            if (other.CompareTag("Dirty") && player.GetCurrentTool() == CleaningTool.Mop)
+            if (other.CompareTag("Dirty") && player.GetCurrentTool() == CleaningTool.sponge)
             {
                 canInteract = true;
             }

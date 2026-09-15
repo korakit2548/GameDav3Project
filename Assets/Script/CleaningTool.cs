@@ -1,5 +1,5 @@
 public enum CleaningTool
 {
-    Mop,
+    sponge,
     Broom
 }
