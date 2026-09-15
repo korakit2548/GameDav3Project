@@ -1,14 +1,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
+using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody Rb;
     private Vector2 moveInput;
-    
+
     [SerializeField]
     private Animator animator;
-    
+    private bool isRunning;
+    private bool isIdle;
+    private bool isWalking;
+
     [SerializeField]
     private InteractHitbox interactHitbox;
 
@@ -26,9 +30,16 @@ public class PlayerController : MonoBehaviour
     float maxSanity = 100;
     private float currentSanity;
 
+    [SerializeField] 
+    private GameObject HurtUI;
+
     [SerializeField]
-    private GameOverUI gameOverUI;
+    private PlayerCam playerCam;
     private bool isGameOver;
+
+    [SerializeField]
+    private float gameOverDelay = 0.2f;
+    private float gameOverTimer;
 
     [SerializeField]
     private CinemachineImpulseSource impulseSource;
@@ -47,34 +58,44 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private CleaningTool currentTool = CleaningTool.sponge;
 
-    private float gameOverDelay = 0.2f;
-
     public void Awake()
     {
         MainCamera = Camera.main;
 
         Rb = GetComponent<Rigidbody>();
-
+        HurtUI.SetActive(false);
         currentSpeed = NormalSpeed;
         currentSanity = maxSanity;
+        gameOverTimer = gameOverDelay;
         Debug.Log("Current Tool: " + currentTool);
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
+        if (moveInput != Vector2.zero)
+        {
+            isWalking = true;
+            isIdle = false;
+        }
+        else
+        {
+            isWalking = false;
+            isIdle = true;
+        }
+
     }
     public void OnRun(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
             currentSpeed = RunSpeed;
-            animator.SetBool("IsRunning", true);
+            isRunning = true;
         }
         else if (context.canceled)
         {
             currentSpeed = NormalSpeed;
-            animator.SetBool("IsRunning", false);
+            isRunning = false;
         }
     }
     public void OnInteract(InputAction.CallbackContext context)
@@ -143,20 +164,14 @@ public class PlayerController : MonoBehaviour
         cameraRight.Normalize();
 
         Vector3 moveDirection = cameraForward * moveInput.y + cameraRight * moveInput.x;
-        
-        bool isWalking = moveDirection.sqrMagnitude > 0.01f;
-        animator.SetBool("IsWalking", isWalking);
-        
-        if (!isWalking)
-        {
-            animator.SetBool("IsRunning", false);
-        }
 
         Rb.linearVelocity = new Vector3(moveDirection.x * currentSpeed, Rb.linearVelocity.y, moveDirection.z * currentSpeed);
 
+        Animation();
+
         if (moveDirection.sqrMagnitude > 0.01f)
         {
-            Quaternion targetRotation =Quaternion.LookRotation(moveDirection);
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
 
             Rb.MoveRotation(
                 Quaternion.Slerp(
@@ -175,11 +190,12 @@ public class PlayerController : MonoBehaviour
 
         if (currentSanity <= 0f && !isGameOver)
         {
-            gameOverDelay -= Time.deltaTime;
+            gameOverTimer -= Time.deltaTime;
 
-            if (gameOverDelay <= 0f)
+            if (gameOverTimer <= 0f)
             {
-                GameOver();
+                isGameOver = true;
+                playerCam.GameOver();
             }
         }
     }
@@ -216,6 +232,8 @@ public class PlayerController : MonoBehaviour
 
         currentSanity -= damage;
 
+        StartCoroutine(ShowSanityDamageUI());
+
         if (currentSanity <= 0f)
         {
             currentSanity = 0f;
@@ -241,15 +259,34 @@ public class PlayerController : MonoBehaviour
     {
         return currentSanity;
     }
-    private void GameOver()
+    private IEnumerator ShowSanityDamageUI()
     {
-        isGameOver = true;
+        HurtUI.SetActive(true);
 
-        Rb.linearVelocity = Vector3.zero;
+        yield return new WaitForSeconds(0.2f);
 
-        if (gameOverUI != null)
+        HurtUI.SetActive(false);
+    }
+
+    private void Animation()
+    {
+        if (isRunning && isWalking)
         {
-            gameOverUI.ShowGameOver();
+            animator.SetBool("IsRunning", true);
+            animator.SetBool("IsWalking", false);
+            animator.SetBool("IsIdle", false);
+        }
+        else if (isWalking)
+        {
+            animator.SetBool("IsWalking", true);
+            animator.SetBool("IsRunning", false);
+            animator.SetBool("IsIdle", false);
+        }
+        else
+        {
+            animator.SetBool("IsIdle", true);
+            animator.SetBool("IsRunning", false);
+            animator.SetBool("IsWalking", false);
         }
     }
 }
