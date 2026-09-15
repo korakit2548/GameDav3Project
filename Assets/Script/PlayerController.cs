@@ -5,6 +5,10 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody Rb;
     private Vector2 moveInput;
+    
+    [SerializeField]
+    private Animator animator;
+    
     [SerializeField]
     private InteractHitbox interactHitbox;
 
@@ -65,10 +69,12 @@ public class PlayerController : MonoBehaviour
         if (context.performed)
         {
             currentSpeed = RunSpeed;
+            animator.SetBool("IsRunning", true);
         }
         else if (context.canceled)
         {
             currentSpeed = NormalSpeed;
+            animator.SetBool("IsRunning", false);
         }
     }
     public void OnInteract(InputAction.CallbackContext context)
@@ -137,6 +143,14 @@ public class PlayerController : MonoBehaviour
         cameraRight.Normalize();
 
         Vector3 moveDirection = cameraForward * moveInput.y + cameraRight * moveInput.x;
+        
+        bool isWalking = moveDirection.sqrMagnitude > 0.01f;
+        animator.SetBool("IsWalking", isWalking);
+        
+        if (!isWalking)
+        {
+            animator.SetBool("IsRunning", false);
+        }
 
         Rb.linearVelocity = new Vector3(moveDirection.x * currentSpeed, Rb.linearVelocity.y, moveDirection.z * currentSpeed);
 
