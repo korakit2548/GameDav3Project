@@ -8,22 +8,30 @@ public class PlayerCam : MonoBehaviour
     private GameObject pausePanel;
 
     [SerializeField]
+    private GameObject gameOverPanel;
+
+    [SerializeField]
     private string mainMenuSceneName = "MainMenu";
 
     private bool isPaused = false;
-
+    private bool isGameOver = false;
 
     public void Start()
     {
         Time.timeScale = 1f;
 
         pausePanel.SetActive(false);
+        gameOverPanel.SetActive(false);
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     public void Update()
     {
+        if (isGameOver)
+            return;
+
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             TogglePause();
@@ -58,8 +66,28 @@ public class PlayerCam : MonoBehaviour
         }
     }
 
+    public void GameOver()
+    {
+        if (isGameOver)
+            return;
+
+        isGameOver = true;
+
+        isPaused = false;
+        pausePanel.SetActive(false);
+
+        Time.timeScale = 0f;
+
+        gameOverPanel.SetActive(true);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        Debug.Log("Game Over");
+    }
     public void GoToMainMenu()
     {
+        
         Time.timeScale = 1f;
 
         SceneManager.LoadScene(mainMenuSceneName);
