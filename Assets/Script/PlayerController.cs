@@ -259,6 +259,10 @@ public class PlayerController : MonoBehaviour
     {
         return currentSanity;
     }
+    public float GetMaxSanity()
+    {
+        return maxSanity;
+    }
     private IEnumerator ShowSanityDamageUI()
     {
         HurtUI.SetActive(true);

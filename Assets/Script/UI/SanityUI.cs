@@ -1,5 +1,5 @@
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 
 public class SanityUI : MonoBehaviour
 {
@@ -7,7 +7,7 @@ public class SanityUI : MonoBehaviour
     private PlayerController player;
 
     [SerializeField]
-    private TMP_Text sanityText;
+    private Slider sanitySlider;
 
     private void Start()
     {
@@ -16,7 +16,11 @@ public class SanityUI : MonoBehaviour
             player = FindFirstObjectByType<PlayerController>();
         }
 
-        UpdateSanityUI();
+        if (player != null && sanitySlider != null)
+        {
+            sanitySlider.maxValue = player.GetMaxSanity();
+            sanitySlider.value = player.GetSanity();
+        }
     }
 
     private void Update()
@@ -26,10 +30,9 @@ public class SanityUI : MonoBehaviour
 
     private void UpdateSanityUI()
     {
-        if (player == null || sanityText == null)
+        if (player == null || sanitySlider == null)
             return;
 
-        sanityText.text =
-            "Sanity: " + player.GetSanity().ToString("0");
+        sanitySlider.value = player.GetSanity();
     }
 }
