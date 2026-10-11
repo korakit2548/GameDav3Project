@@ -48,12 +48,12 @@ ModelImporter:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: bath_open_c
-    second: {fileID: 2800000, guid: c8fcc6df2f2c3b348b1ca2cd6ff0c6ca, type: 3}
+    second: {fileID: 2800000, guid: 2c0fa6025b8514a499692db00a756485, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: pngtree-soft-white-curtain-with-gentle-folds-png-image_19220379-removebg-preview
-    second: {fileID: 2800000, guid: 63911645d5b62ec479e908dd214eecab, type: 3}
+    second: {fileID: 2800000, guid: 56353710836164c4bb48624fcaf5986f, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
