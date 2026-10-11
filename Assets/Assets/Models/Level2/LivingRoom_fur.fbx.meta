@@ -1,0 +1,274 @@
+fileFormatVersion: 2
+guid: 3564c4211f3f8ce4d861db441cfac4ac
+ModelImporter:
+  serializedVersion: 24501
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Black
+    second: {fileID: 2100000, guid: 8e8f26c53f3e5b24cac77a8805fb8f91, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BookCover2
+    second: {fileID: 2100000, guid: 2f2f00fdbf9a6c944bed6e4f85020d4a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BookCover3
+    second: {fileID: 2100000, guid: 160ee2731d8fee7498bb49898fd5d7ce, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BookCover4
+    second: {fileID: 2100000, guid: 5334b1f653204f14292b21a3298b7dfc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BookCover5
+    second: {fileID: 2100000, guid: 3988a49cf8563734dbc6470ac9941ca6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bookshelf
+    second: {fileID: 2100000, guid: 3bcd7b32c79a30c4ebfadbb67ed91da1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Carpet_M
+    second: {fileID: 2100000, guid: 065f3ebafdcfb63488e1d69464d662c3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DarkWood_M
+    second: {fileID: 2100000, guid: 7b238a3a2a37a3d499bff5532d3bfe75, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: InBookshelf
+    second: {fileID: 2100000, guid: cedb8ca4a3ce03c4da5fdafda2a90203, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: SmallCurtain_M.001
+    second: {fileID: 2100000, guid: 3a9bc19356932b545b6904e402d4eec2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sofa_M
+    second: {fileID: 2100000, guid: b3587720dc6ffb044afa03839f3028d8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TVDisplay_M
+    second: {fileID: 2100000, guid: 3df1a87b35852c74b81c433eb60139b8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TVPlayer1_M
+    second: {fileID: 2100000, guid: 343dd892e792f354bb198be5b89c72ae, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TVPlayer2_M
+    second: {fileID: 2100000, guid: 729bd6c1f0174a44eb785302cd06a21b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TV_M
+    second: {fileID: 2100000, guid: e5c8f8c4bc39be24ead34798fa3c9d48, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: drawe_knob
+    second: {fileID: 2100000, guid: 86ec857b6ecdd4144814d51a6164c8aa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: paper
+    second: {fileID: 2100000, guid: e3835c02804f2964abfdbd5a1ba93cbb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wood_M
+    second: {fileID: 2100000, guid: c8cf3183490668c4aaba055a1fda77df, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Design_3DChar&Prop&EnvSheet_GRP010_Astral_Fabel (2)
+    second: {fileID: 2800000, guid: 7a0bcc455faaf5a468e5bc38a9e3e907, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TVPlayer1_M_BaseColor
+    second: {fileID: 2800000, guid: eff2458a95a5bf8449caa2689a35760e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TVPlayer1_M_Metallic
+    second: {fileID: 2800000, guid: bd8cf56403cd5a3429d1b2a9dce2e634, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TVPlayer1_M_Normal
+    second: {fileID: 2800000, guid: 98a187e33f79dd54086ad38c8a122efe, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TVPlayer1_M_Roughness
+    second: {fileID: 2800000, guid: dd90d989fd58f5c4aa26459db0473e95, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TVPlayer2_M_BaseColor
+    second: {fileID: 2800000, guid: aeccc0abcb5be054f8a7a840ac5c07c7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TVPlayer2_M_Metallic
+    second: {fileID: 2800000, guid: ce0f7c68ca1f02f4296c1bd5615e0137, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TVPlayer2_M_Normal
+    second: {fileID: 2800000, guid: 17821a0bf10acc441a61165e90c2088a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TVPlayer2_M_Roughness
+    second: {fileID: 2800000, guid: f8e44e8f1a6b5b0429391226e994ab51, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TV_TVDisplay_M_BaseMap
+    second: {fileID: 2800000, guid: a191eb68b181ba740b071924c50b4bd7, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TV_TVDisplay_M_Normal
+    second: {fileID: 2800000, guid: aec8f572ec79c764a819c2d28dbf9b52, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TV_TV_M_BaseMap
+    second: {fileID: 2800000, guid: f0e119062dff8314fa448fd71f7db4ef, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: TV_TV_M_Normal
+    second: {fileID: 2800000, guid: 72900f1155599964981f3ad70a16cf08, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: pngtree-soft-white-curtain-with-gentle-folds-png-image_19220379-removebg-preview
+    second: {fileID: 2800000, guid: 00f80bef1fdf23f49aa2ea617063f181, type: 3}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+    searchTexturesGlobally: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    importUVs: -1
+    importVertexColors: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+    calculateBlendshapeNormalsDeltaFromImportedNormals: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
