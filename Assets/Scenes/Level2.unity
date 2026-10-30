@@ -2876,11 +2876,11 @@ RectTransform:
   m_Children:
   - {fileID: 1341796596}
   - {fileID: 1145999172}
+  - {fileID: 1795938401}
   - {fileID: 1469440057}
   - {fileID: 1477368648}
   - {fileID: 1673955575}
   - {fileID: 1148009026}
-  - {fileID: 1795938401}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3801,6 +3801,8 @@ MonoBehaviour:
   RunSpeed: 10
   RotationSpeed: 3
   maxSanity: 200
+  sanityRegenAmount: 1
+  sanityRegenInterval: 3
   HurtUI: {fileID: 1341796595}
   playerCam: {fileID: 1755465443}
   gameOverDelay: 0.2
@@ -5104,6 +5106,55 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.38842583, y: 5.506276, z: 16.073696}
   m_Center: {x: 0.3057871, y: 2.253138, z: -1.9443288}
+--- !u!1 &1414892238
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1414892239}
+  - component: {fileID: 1414892240}
+  m_Layer: 0
+  m_Name: RoomManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1414892239
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414892238}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1819359615}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1414892240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414892238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f18c5785dd322a74380e54925eb0dcb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomManager
+  rooms:
+  - {fileID: 1131323226}
+  - {fileID: 2125249275}
+  - {fileID: 35600118}
+  - {fileID: 154889216}
 --- !u!1 &1469440056
 GameObject:
   m_ObjectHideFlags: 0
@@ -5153,7 +5204,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddfc8d7b261d7fc43b85595f4c85abf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ToolUI
+  toolImage: {fileID: 0}
   toolText: {fileID: 1174348483}
+  spongeIcon: {fileID: 0}
+  broomIcon: {fileID: 0}
 --- !u!1 &1477348818
 GameObject:
   m_ObjectHideFlags: 0
@@ -6353,7 +6407,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCam
   pausePanel: {fileID: 1477368647}
   gameOverPanel: {fileID: 1832319234}
+  levelCompletePanel: {fileID: 0}
   mainMenuSceneName: MainMenu
+  nextLevelSceneName: Level2
 --- !u!1 &1773373969
 GameObject:
   m_ObjectHideFlags: 0
@@ -6596,6 +6652,39 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1819359614
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1819359615}
+  m_Layer: 0
+  m_Name: Enemy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1819359615
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819359614}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.66957, y: 0, z: -7.09718}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2027736241}
+  - {fileID: 1414892239}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1832319234
 GameObject:
   m_ObjectHideFlags: 0
@@ -7290,6 +7379,55 @@ MonoBehaviour:
     FrequencyGain: 1
     Duration: 1
     m_NoiseOffsets: {x: 0, y: 0, z: 0}
+--- !u!1 &2027736240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2027736241}
+  - component: {fileID: 2027736242}
+  m_Layer: 0
+  m_Name: EnemySpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2027736241
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027736240}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1819359615}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2027736242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027736240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b7ae97ab8b5c724bbdd8076f5ae21cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
+  roomManager: {fileID: 1414892240}
+  enemyPrefab: {fileID: 0}
+  SetSpawnInterval: 8
+  SetspawnChance: 0.5
+  ReduceTime: 2
 --- !u!1 &2064866502 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3024621452840433635, guid: 5511a015dbc8eb64e8565559fe696736, type: 3}
@@ -7821,3 +7959,4 @@ SceneRoots:
   - {fileID: 522810423}
   - {fileID: 1739474117}
   - {fileID: 104427227}
+  - {fileID: 1819359615}

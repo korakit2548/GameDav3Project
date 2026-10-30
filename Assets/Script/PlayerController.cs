@@ -30,6 +30,13 @@ public class PlayerController : MonoBehaviour
     float maxSanity = 100;
     private float currentSanity;
 
+    [SerializeField]
+    private float sanityRegenAmount = 1f;
+    [SerializeField]
+    private float sanityRegenInterval = 3f;
+
+    private float sanityRegenTimer;
+
     [SerializeField] 
     private GameObject HurtUI;
 
@@ -54,10 +61,12 @@ public class PlayerController : MonoBehaviour
 
     private IInteractable currentInteract;
     private IHoldInteractable currentHoldInteract;
+    private bool isHoldingInteract;
 
     [SerializeField]
     private CleaningTool currentTool = CleaningTool.sponge;
 
+    private PlayerCarrySystem playerCarrySystem;
     public void Awake()
     {
         MainCamera = Camera.main;
@@ -68,6 +77,8 @@ public class PlayerController : MonoBehaviour
         currentSanity = maxSanity;
         gameOverTimer = gameOverDelay;
         Debug.Log("Current Tool: " + currentTool);
+
+        playerCarrySystem = GetComponent<PlayerCarrySystem>();
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -87,10 +98,20 @@ public class PlayerController : MonoBehaviour
     }
     public void OnRun(InputAction.CallbackContext context)
     {
+        bool hasItem = playerCarrySystem != null && playerCarrySystem.HasItem();
+
         if (context.performed)
         {
-            currentSpeed = RunSpeed;
-            isRunning = true;
+            if (!hasItem)
+            {
+                currentSpeed = RunSpeed;
+                isRunning = true;
+            }
+            else
+            {
+                currentSpeed = NormalSpeed;
+                isRunning = false;
+            }
         }
         else if (context.canceled)
         {
@@ -98,17 +119,35 @@ public class PlayerController : MonoBehaviour
             isRunning = false;
         }
     }
-    public void OnInteract(InputAction.CallbackContext context)
+
+    private void OnInteract(InputAction.CallbackContext context)
     {
+        // ตรวจสอบว่า Hold Interactable ถูก Destroy ไปแล้วหรือไม่
+        if (currentHoldInteract is UnityEngine.Object holdObject &&
+            holdObject == null)
+        {
+            currentHoldInteract = null;
+            isHoldingInteract = false;
+        }
+
         if (currentHoldInteract != null)
         {
             if (context.started)
             {
+                isHoldingInteract = true;
                 currentHoldInteract.BeginHold();
+
+                moveInput = Vector2.zero;
+                Rb.linearVelocity = new Vector3(
+                    0f,
+                    Rb.linearVelocity.y,
+                    0f
+                );
             }
             else if (context.canceled)
             {
                 currentHoldInteract.EndHold();
+                isHoldingInteract = false;
             }
 
             return;
@@ -117,7 +156,6 @@ public class PlayerController : MonoBehaviour
         if (context.performed && currentInteract != null)
         {
             currentInteract.Interact();
-
             currentInteract = null;
         }
     }
@@ -155,6 +193,8 @@ public class PlayerController : MonoBehaviour
 
     public void Update()
     {
+        UpdateMovementSpeed();
+
         Vector3 cameraForward = MainCamera.transform.forward;
         Vector3 cameraRight = MainCamera.transform.right;
 
@@ -164,6 +204,24 @@ public class PlayerController : MonoBehaviour
         cameraRight.Normalize();
 
         Vector3 moveDirection = cameraForward * moveInput.y + cameraRight * moveInput.x;
+
+        if (isHoldingInteract)
+        {
+            moveDirection = Vector3.zero;
+            Rb.linearVelocity = new Vector3(
+                0f,
+                Rb.linearVelocity.y,
+                0f
+            );
+        }
+        else
+        {
+            Rb.linearVelocity = new Vector3(
+                moveDirection.x * currentSpeed,
+                Rb.linearVelocity.y,
+                moveDirection.z * currentSpeed
+            );
+        }
 
         Rb.linearVelocity = new Vector3(moveDirection.x * currentSpeed, Rb.linearVelocity.y, moveDirection.z * currentSpeed);
 
@@ -187,6 +245,8 @@ public class PlayerController : MonoBehaviour
         {
             currentHoldInteract.UpdateHold(Time.deltaTime);
         }
+
+        RegenerateSanity();
 
         if (currentSanity <= 0f && !isGameOver)
         {
@@ -271,9 +331,30 @@ public class PlayerController : MonoBehaviour
 
         HurtUI.SetActive(false);
     }
+    private void UpdateMovementSpeed()
+    {
+        bool hasItem = playerCarrySystem != null && playerCarrySystem.HasItem();
 
+        if (hasItem)
+        {
+            currentSpeed = NormalSpeed;
+            isRunning = false;
+        }
+        else
+        {
+            currentSpeed = isRunning ? RunSpeed : NormalSpeed;
+        }
+    }
     private void Animation()
     {
+        if (isHoldingInteract)
+        {
+            animator.SetBool("IsIdle", true);
+            animator.SetBool("IsWalking", false);
+            animator.SetBool("IsRunning", false);
+            return;
+        }
+
         if (isRunning && isWalking)
         {
             animator.SetBool("IsRunning", true);
@@ -291,6 +372,25 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("IsIdle", true);
             animator.SetBool("IsRunning", false);
             animator.SetBool("IsWalking", false);
+        }
+    }
+
+    private void RegenerateSanity()
+    {
+        if (currentSanity >= maxSanity || isGameOver)
+            return;
+
+        sanityRegenTimer += Time.deltaTime;
+
+        if (sanityRegenTimer >= sanityRegenInterval)
+        {
+            currentSanity += sanityRegenAmount;
+
+            currentSanity = Mathf.Min(currentSanity, maxSanity);
+
+            sanityRegenTimer = 0f;
+
+            Debug.Log("Sanity: " + currentSanity + " / " + maxSanity);
         }
     }
 }

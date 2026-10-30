@@ -45,8 +45,8 @@ public class ObjectiveUI : MonoBehaviour
         {
             isComplete = true;
 
-            dirtyText.text = "Objective Complete";
-            trashText.text = "";
+            dirtyText.gameObject.SetActive(false);
+            trashText.gameObject.SetActive(false);
 
             if (gameCompleteUI != null)
             {

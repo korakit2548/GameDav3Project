@@ -1,36 +1,26 @@
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [SerializeField]
-    private string gameSceneName = "Game";
-    [SerializeField]
-    private GameObject tutorialPanel;
+    [Header("Scene Settings")]
+    [SerializeField] private string gameSceneName = "Game";
+    [SerializeField] private string tutorialSceneName = "Tutorial";
 
     public void Play()
     {
         SceneManager.LoadScene(gameSceneName);
     }
+
     public void OpenTutorial()
     {
-        if (tutorialPanel != null)
-        {
-            tutorialPanel.SetActive(true);
-        }
-    }
-    public void CloseTutorial()
-    {
-        if (tutorialPanel != null)
-        {
-            tutorialPanel.SetActive(false);
-        }
+        SceneManager.LoadScene(tutorialSceneName);
     }
 
     public void Quit()
     {
         Debug.Log("Quit Game");
-
         Application.Quit();
     }
 }
