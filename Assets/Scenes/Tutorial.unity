@@ -7593,12 +7593,12 @@ MonoBehaviour:
   WarningLightColor: {r: 1, g: 0, b: 0.6627451, a: 1}
   cursedLightColor: {r: 1, g: 0, b: 0, a: 1}
   cursedDelay: 0.5
-  cursedDuration: 3
+  cursedDuration: 2
   instantDamage: 30
   instantDamageDelay: 3
   OvertimeDamage: 2
   damageInterval: 0.1
-  warningTime: 3
+  warningTime: 7
 --- !u!1 &2143938796
 GameObject:
   m_ObjectHideFlags: 0
