@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
     float maxSanity = 100;
     private float currentSanity;
     public event System.Action<float> SanityChanged;
-    [SerializeField, Range(0f, 1f)] private float incomingDamageMultiplier = 0.5f;
+    [SerializeField, Min(0f)] private float sanityDamagePerHit = 2.5f;
 
     [SerializeField]
     private float sanityRegenAmount = 1f;
@@ -264,6 +264,7 @@ public class PlayerController : MonoBehaviour
 
         footstepEffects.SetMoving(moveDirection.sqrMagnitude > 0.01f &&
             !isHoldingInteract && !isGameOver && currentSanity > 0f);
+        footstepEffects.SetRunning(isRunning);
 
         Animation();
 
@@ -325,11 +326,11 @@ public class PlayerController : MonoBehaviour
     }
     public void TakeSanityDamage(float damage)
     {
-        if (isGameOver)
+        if (isGameOver || damage <= 0f)
             return;
 
         float previousSanity = currentSanity;
-        currentSanity -= Mathf.Max(0f, damage) * incomingDamageMultiplier;
+        currentSanity -= Mathf.Max(0f, sanityDamagePerHit);
 
         damageFeedback.ShowDamage();
         currentSanity = Mathf.Max(0f, currentSanity);

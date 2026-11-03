@@ -27,6 +27,11 @@ public sealed class PlayerFootsteps : MonoBehaviour
     [SerializeField] private LayerMask groundLayers = ~0;
     [SerializeField, Min(0f)] private float groundContactTolerance = 0.03f;
 
+    [Header("Faint Running Dust")]
+    [SerializeField, Range(0f, 0.5f)] private float runningDustOpacity = 0.16f;
+    [SerializeField, Min(0.01f)] private float runningDustSize = 0.12f;
+    [SerializeField, Min(0.1f)] private float runningDustLifetime = 0.5f;
+
     private readonly RaycastHit[] groundHits = new RaycastHit[16];
     private readonly System.Random audioRandom = new System.Random();
     private Rigidbody body;
@@ -38,6 +43,8 @@ public sealed class PlayerFootsteps : MonoBehaviour
     private float travelledDistance;
     private float timeSinceStep;
     private bool isMoving;
+    private bool isRunning;
+    private ParticleSystem runningDust;
     private bool nextLeftFoot = true;
     private int previousClip = -1;
 
@@ -70,6 +77,7 @@ public sealed class PlayerFootsteps : MonoBehaviour
     }
 
     public void SetMoving(bool moving) { isMoving = moving; }
+    public void SetRunning(bool running) { isRunning = running; }
 
     private void LateUpdate() { UpdateFootsteps(Time.deltaTime); }
 
@@ -135,6 +143,7 @@ public sealed class PlayerFootsteps : MonoBehaviour
         Vector3 footPosition = transform.position + transform.right * (side * footSeparation)
             - transform.forward * (0.1f + trailingOffset);
         if (!TryGetGround(footPosition, out var ground)) return false;
+        if (isRunning) EmitRunningDust(ground);
         if (footprintMaterial != null)
         {
             if (trail == null)
@@ -152,6 +161,53 @@ public sealed class PlayerFootsteps : MonoBehaviour
                 Quaternion.LookRotation(ground.normal, forward), leftFoot);
         }
         return true;
+    }
+
+    private void EmitRunningDust(RaycastHit ground)
+    {
+        if (runningDust == null)
+        {
+            var material = Resources.Load<Material>("PlayerActions/SoftDust");
+            if (material == null) return;
+            var child = new GameObject("Faint Running Foot Dust");
+            child.transform.SetParent(transform, false);
+            runningDust = child.AddComponent<ParticleSystem>();
+            runningDust.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = runningDust.main;
+            main.playOnAwake = false;
+            main.loop = true;
+            main.maxParticles = 32;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.scalingMode = ParticleSystemScalingMode.Shape;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(runningDustLifetime * 0.7f, runningDustLifetime);
+            main.startSize = new ParticleSystem.MinMaxCurve(runningDustSize * 0.6f, runningDustSize);
+            main.startColor = new Color(0.75f, 0.72f, 0.67f, runningDustOpacity);
+            main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
+            var emission = runningDust.emission;
+            emission.enabled = false;
+            var shape = runningDust.shape;
+            shape.enabled = false;
+            var color = runningDust.colorOverLifetime;
+            color.enabled = true;
+            var gradient = new Gradient();
+            gradient.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(1f, 0.12f), new GradientAlphaKey(0f, 1f) });
+            color.color = gradient;
+            var size = runningDust.sizeOverLifetime;
+            size.enabled = true;
+            size.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0.6f, 1f, 1.4f));
+            var renderer = child.GetComponent<ParticleSystemRenderer>();
+            renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            renderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+        }
+        if (!runningDust.isPlaying) runningDust.Play();
+        runningDust.Emit(new ParticleSystem.EmitParams
+        {
+            position = ground.point + ground.normal * 0.04f,
+            velocity = ground.normal * 0.08f - transform.forward * 0.06f
+        }, 1);
     }
 
     private bool TryGetGround(Vector3 position, out RaycastHit ground)
@@ -177,7 +233,9 @@ public sealed class PlayerFootsteps : MonoBehaviour
     private void OnDisable()
     {
         isMoving = false;
+        isRunning = false;
         travelledDistance = 0f;
+        if (runningDust != null) runningDust.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         if (audioSource != null) audioSource.Stop();
     }
 

@@ -14,12 +14,14 @@ public sealed class PauseButtonHoverGraphic : MonoBehaviour
         if (overlay == null)
         {
             var mask = new GameObject("Pause Button Hover Mask", typeof(RectTransform), typeof(RectMask2D));
+            mask.layer = source.gameObject.layer;
             mask.transform.SetParent(transform, false);
             var rect = (RectTransform)mask.transform;
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
             rect.offsetMin = rect.offsetMax = Vector2.zero;
             var image = new GameObject("Pause Sign Dark Overlay", typeof(RectTransform), typeof(Image));
+            image.layer = source.gameObject.layer;
             image.transform.SetParent(mask.transform, false);
             overlay = image.GetComponent<Image>();
             overlay.raycastTarget = false;

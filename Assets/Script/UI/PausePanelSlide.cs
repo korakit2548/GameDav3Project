@@ -69,8 +69,17 @@ public sealed class PausePanelSlide : MonoBehaviour
             {
                 for (Transform parent = button.transform.parent; parent != null; parent = parent.parent)
                 {
-                    var artwork = parent.GetComponent<Image>();
-                    if (artwork == null || artwork.sprite == null || artwork.color.a <= 0.01f) continue;
+                    Image artwork = null;
+                    foreach (var candidate in parent.GetComponentsInChildren<Image>(true))
+                    {
+                        if (candidate.sprite == null || candidate.color.a <= 0.01f
+                            || candidate.GetComponentInParent<Button>() != null) continue;
+                        Vector3 center = button.transform.TransformPoint(((RectTransform)button.transform).rect.center);
+                        if (!candidate.rectTransform.rect.Contains(candidate.rectTransform.InverseTransformPoint(center))) continue;
+                        artwork = candidate;
+                        break;
+                    }
+                    if (artwork == null) continue;
                     hover = button.gameObject.AddComponent<PauseButtonHoverGraphic>();
                     hover.Configure(artwork);
                     break;
