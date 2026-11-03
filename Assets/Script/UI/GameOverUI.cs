@@ -7,18 +7,19 @@ public class GameOverUI : MonoBehaviour
 
     private void Start()
     {
-        gameOverPanel.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
     }
 
     public void ShowGameOver()
     {
-        gameOverPanel.SetActive(true);
-
-        Time.timeScale = 0f;
-
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
-        Debug.Log("Game Over");
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        var playerCam = FindAnyObjectByType<PlayerCam>();
+        if (playerCam != null) playerCam.GameOver();
+        else
+        {
+            var sequence = GetComponent<GameOverSequence>();
+            if (sequence == null) sequence = gameObject.AddComponent<GameOverSequence>();
+            sequence.Show("MainMenu");
+        }
     }
 }

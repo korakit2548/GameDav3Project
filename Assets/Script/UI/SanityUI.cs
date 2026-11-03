@@ -11,6 +11,8 @@ public class SanityUI : MonoBehaviour
 
     private void Start()
     {
+        ConfigureSlider();
+
         if (player == null)
         {
             player = FindFirstObjectByType<PlayerController>();
@@ -21,6 +23,30 @@ public class SanityUI : MonoBehaviour
             sanitySlider.maxValue = player.GetMaxSanity();
             sanitySlider.value = player.GetSanity();
         }
+    }
+
+    private void ConfigureSlider()
+    {
+        if (sanitySlider == null) return;
+
+        float currentValue = sanitySlider.value;
+        // The golden center artwork is decoration, not a moving slider handle.
+        // Keep its authored full-health pose before releasing Slider's control.
+        sanitySlider.SetValueWithoutNotify(sanitySlider.maxValue);
+        sanitySlider.handleRect = null;
+        sanitySlider.minValue = 0f;
+
+        var fill = sanitySlider.fillRect != null ? sanitySlider.fillRect.GetComponent<Image>() : null;
+        if (fill != null)
+        {
+            // Clip the original full-size art instead of shrinking a rect with
+            // fixed margins, which made the bar look empty before health was zero.
+            fill.type = Image.Type.Filled;
+            fill.fillMethod = Image.FillMethod.Horizontal;
+            fill.fillOrigin = (int)Image.OriginHorizontal.Left;
+            fill.fillAmount = sanitySlider.normalizedValue;
+        }
+        sanitySlider.SetValueWithoutNotify(currentValue);
     }
 
     private void Update()

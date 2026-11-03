@@ -20,6 +20,9 @@ public class Room : MonoBehaviour
     private Transform trashSpawnPoint;
 
     [SerializeField]
+    private Transform roomDoor;
+
+    [SerializeField]
     private Light roomLight;
 
     [SerializeField]
@@ -30,6 +33,15 @@ public class Room : MonoBehaviour
 
     [SerializeField]
     private Color cursedLightColor = Color.red;
+
+    [Header("Random Room Light Brightness")]
+    [SerializeField, Min(0f)]
+    private float warningLightIntensityMultiplier = 2f;
+
+    [SerializeField, Min(0f)]
+    private float cursedLightIntensityMultiplier = 2f;
+
+    private float normalLightIntensity;
 
     [SerializeField]
     private float cursedDelay = 1f;
@@ -60,6 +72,15 @@ public class Room : MonoBehaviour
     private float warningTimer;
     private bool isWarning;
     private bool CursedImmediately;
+
+    private void Awake()
+    {
+        if (roomLight != null)
+        {
+            normalLightIntensity = roomLight.intensity;
+        }
+    }
+
     private void Update()
     {
         if (!isWarning)
@@ -137,7 +158,7 @@ public class Room : MonoBehaviour
         CursedImmediately = false;
 
         SpawnCursedTrash();
-        SetRoomLight(WarningLightColor);
+        SetRoomLight(WarningLightColor, warningLightIntensityMultiplier);
         Debug.Log(gameObject.name + " Warning");
     }
     private void EndWarning()
@@ -159,7 +180,7 @@ public class Room : MonoBehaviour
     public void SetCursed()
     {
         currentState = RoomState.Cursed;
-        SetRoomLight(cursedLightColor);
+        SetRoomLight(cursedLightColor, cursedLightIntensityMultiplier);
     }
     public void StartCursedImmediately()
     {
@@ -174,9 +195,22 @@ public class Room : MonoBehaviour
     }
     public void SetNormal()
     {
+        isWarning = false;
+        warningTimer = 0f;
+        CursedImmediately = false;
+        if (cursedDamageCoroutine != null)
+        {
+            StopCoroutine(cursedDamageCoroutine);
+            cursedDamageCoroutine = null;
+        }
+        if (instantDamageCoroutine != null)
+        {
+            StopCoroutine(instantDamageCoroutine);
+            instantDamageCoroutine = null;
+        }
         currentState = RoomState.Normal;
 
-        SetRoomLight(normalLightColor);
+        SetRoomLight(normalLightColor, 1f);
         //Debug.Log(gameObject.name + " Normal");
     }
 
@@ -197,6 +231,8 @@ public class Room : MonoBehaviour
             trashSpawnPoint.rotation
         );
 
+        CursedTrashFacing.FaceDoor(cursedTrashObject, roomDoor);
+
         CursedTrash cursedTrash = cursedTrashObject.GetComponent<CursedTrash>();
 
         if (cursedTrash != null)
@@ -207,29 +243,17 @@ public class Room : MonoBehaviour
     }
 
 
-    private void SetRoomLight(Color color)
+    private void SetRoomLight(Color color, float intensityMultiplier)
     {
         if (roomLight == null)
         {
             return;
         }
         roomLight.color = color;
+        roomLight.intensity = normalLightIntensity * Mathf.Max(0f, intensityMultiplier);
     }
     public void CleanCursedRoom()
     {
-        if (currentState != RoomState.Warning &&
-            currentState != RoomState.Cursed)
-        {
-            return;
-        }
-        isWarning = false;
-        warningTimer = 0f;
-
-        if (instantDamageCoroutine != null)
-        {
-            StopCoroutine(instantDamageCoroutine);
-            instantDamageCoroutine = null;
-        }
         SetNormal();
         //Debug.Log(gameObject.name + " ถูกทำความสะอาดแล้ว");
     }
@@ -240,7 +264,7 @@ public class Room : MonoBehaviour
         float damageTimer = 0f;
         float durationTimer = 0f;
 
-        while (durationTimer < cursedDuration)
+        while (durationTimer < cursedDuration && currentState == RoomState.Cursed && CursedImmediately)
         {
             durationTimer += Time.deltaTime;
 
@@ -263,7 +287,7 @@ public class Room : MonoBehaviour
         }
         cursedDamageCoroutine = null;
         //Debug.Log(gameObject.name + " จบช่วง Cursed Movement");
-        SetWarning();
+        if (currentState == RoomState.Cursed && CursedImmediately) SetWarning();
     }
 
     private IEnumerator InstantDamageAfterDelay()

@@ -1,0 +1,131 @@
+#if UNITY_EDITOR
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+// Temporary, explicit-request verification. Never changes or saves project assets.
+[InitializeOnLoad]
+internal static class CodexCursedTrashPromptProof
+{
+    private const string Project = @"D:\CAMT\GameDav3Projectt\GameDav3Project";
+    private const string Prefab = "Assets/Assets/Cursed_trash.prefab";
+    private static readonly string Work = Path.Combine(Project, "Work", "cursed-trash-e");
+    private static readonly string Request = Path.Combine(Work, "verify.request");
+    private static readonly BindingFlags PrivateInstance = BindingFlags.NonPublic | BindingFlags.Instance;
+
+    static CodexCursedTrashPromptProof()
+    {
+        EditorApplication.update += Check;
+    }
+
+    private static void Check()
+    {
+        if (AssetDatabase.IsAssetImportWorkerProcess() || EditorApplication.isCompiling ||
+            EditorApplication.isUpdating || EditorApplication.isPlayingOrWillChangePlaymode) return;
+        string actual = Path.GetFullPath(Path.GetDirectoryName(Application.dataPath));
+        if (!string.Equals(actual.TrimEnd('\\', '/'), Project, StringComparison.OrdinalIgnoreCase) ||
+            !File.Exists(Request)) return;
+        File.Delete(Request);
+        var report = new StringBuilder();
+        GameObject root = null;
+        GameObject cameraObject = null;
+        try
+        {
+            root = PrefabUtility.LoadPrefabContents(Prefab);
+            var highlight = root.GetComponent<InteractHighlight>();
+            var hold = root.GetComponent<HoldDestroyableObject>();
+            var cursed = root.GetComponent<CursedTrash>();
+            Require(root.CompareTag("CursedTrash") && cursed != null && hold != null, "Cursed gameplay components preserved");
+            var texts = root.GetComponentsInChildren<TextMeshProUGUI>(true);
+            Require(texts.Length == 1 && texts[0].text == "E" && texts[0].enabled, "Exactly one enabled TMP E");
+            var text = texts[0];
+            Require(AssetDatabase.GetAssetPath(text.font) == "Assets/Assets/UI/Iannnnn-BAT-Regular SDF.asset", "Requested Iannnnn-BAT font");
+            Require(Quaternion.Angle(text.transform.localRotation, Quaternion.identity) < 0.01f &&
+                    Quaternion.Angle(text.transform.parent.localRotation, Quaternion.identity) < 0.01f,
+                    "TMP and Image container have no sideways/backwards local rotation");
+            var images = root.GetComponentsInChildren<Image>(true);
+            var legacy = images.Single(i => i.name == "Image");
+            Require(!legacy.enabled, "Old baked E Image disabled");
+            var cleaningBar = root.GetComponentInChildren<CleaningBar>(true);
+            var fill = (Image)new SerializedObject(cleaningBar).FindProperty("fillImage").objectReferenceValue;
+            Require(fill != null && fill.enabled && fill.name == "Fill" && fill.type == Image.Type.Filled &&
+                    fill.fillMethod == Image.FillMethod.Radial360 && fill.color.g > 0.6f && fill.color.r < 0.01f,
+                    "Original green radial cleaning fill preserved");
+            Require(new SerializedObject(hold).FindProperty("cleaningBar").objectReferenceValue == cleaningBar,
+                    "HoldDestroyableObject still references cursed CleaningBar");
+            var label = (GameObject)new SerializedObject(highlight).FindProperty("highlightLabel").objectReferenceValue;
+            Require(label != null && text.transform.IsChildOf(label.transform), "Prompt uses cursed highlight Canvas");
+            var billboard = label.GetComponentInChildren<Billboard>(true);
+            Require(billboard != null && billboard.enabled, "Existing billboard enabled");
+
+            cameraObject = new GameObject("Cursed prompt verification camera", typeof(Camera));
+            SceneManager.MoveGameObjectToScene(cameraObject, root.scene);
+            var camera = cameraObject.GetComponent<Camera>();
+            typeof(Billboard).GetField("mainCamera", PrivateInstance).SetValue(billboard, camera);
+            highlight.SetHighlight(true, true);
+            Bounds bounds = default;
+            bool found = false;
+            foreach (var renderer in root.GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if (renderer.name.StartsWith("Interaction Outline") || renderer.transform.IsChildOf(label.transform) ||
+                    !renderer.enabled || !renderer.gameObject.activeInHierarchy) continue;
+                if (!found) bounds = renderer.bounds;
+                else bounds.Encapsulate(renderer.bounds);
+                found = true;
+            }
+            Require(found, "Teddy and pile render bounds available");
+            // Camera.main may refer to the editor's open scene, so check the prompt's
+            // direction-independent bounds center projection along its actual camera axis.
+            Vector3 centerDelta = billboard.transform.position - bounds.center;
+            Camera actualMain = Camera.main;
+            if (actualMain != null)
+            {
+                Vector3 direction = (actualMain.transform.position - bounds.center).normalized;
+                Require(Vector3.Cross(centerDelta, direction).magnitude < 0.005f,
+                        "Prompt centered on teddy/pile bounds and moved only toward viewer");
+            }
+            else Require(centerDelta.magnitude < 0.005f, "Prompt centered on teddy/pile bounds");
+            Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right,
+                new Vector3(1, 1, 1).normalized };
+            foreach (var direction in directions)
+            {
+                camera.transform.position = billboard.transform.position + direction * 3f;
+                camera.transform.LookAt(billboard.transform.position, Vector3.up);
+                typeof(Billboard).GetMethod("LateUpdate", PrivateInstance).Invoke(billboard, null);
+                Require(Vector3.Dot(text.transform.forward, -direction) > 0.999f &&
+                        Vector3.Dot(text.transform.right, camera.transform.right) > 0.999f &&
+                        Vector3.Dot(text.transform.up, camera.transform.up) > 0.999f,
+                        "Upright readable facing verified at direction " + direction);
+            }
+            cleaningBar.SetProgress(0.6f);
+            Require(Mathf.Abs(fill.fillAmount - 0.6f) < 0.001f, "Green progress fill responds at 60 percent");
+            report.AppendLine("PASS: Cursed trash E prefab verified in live Unity Editor.");
+            report.AppendLine("TMP E=1; legacy baked Image enabled=0; correct font; identity prompt rotations; billboard poses=5; radial green fill working; cursed gameplay references preserved.");
+            report.AppendLine("Scene and prefab assets were not saved by verification.");
+        }
+        catch (Exception e)
+        {
+            report.AppendLine("FAIL: " + e);
+        }
+        finally
+        {
+            if (cameraObject != null) UnityEngine.Object.DestroyImmediate(cameraObject);
+            if (root != null) PrefabUtility.UnloadPrefabContents(root);
+            Directory.CreateDirectory(Work);
+            File.WriteAllText(Path.Combine(Work, "unity-proof.txt"), report.ToString());
+        }
+    }
+
+    private static void Require(bool condition, string message)
+    {
+        if (!condition) throw new InvalidOperationException(message);
+    }
+}
+#endif

@@ -11,6 +11,15 @@ public class CleaningBar : MonoBehaviour
         if (fillImage == null)
             return;
 
-        fillImage.fillAmount = progress;
+        float amount = Mathf.Clamp01(progress);
+        fillImage.type = Image.Type.Filled;
+        var slider = GetComponent<Slider>();
+        if (slider != null && slider.fillRect == fillImage.rectTransform)
+        {
+            fillImage.rectTransform.anchorMin = Vector2.zero;
+            fillImage.rectTransform.anchorMax = Vector2.one;
+            slider.SetValueWithoutNotify(Mathf.Lerp(slider.minValue, slider.maxValue, amount));
+        }
+        fillImage.fillAmount = amount;
     }
 }

@@ -9,15 +9,25 @@ public class GameCompleteUI : MonoBehaviour
 
     private void Start()
     {
-        completePanel.SetActive(false);
+        if (!isComplete && completePanel != null) completePanel.SetActive(false);
     }
 
     public void ShowComplete()
     {
-
+        if (isComplete) return;
         isComplete = true;
 
-        completePanel.SetActive(true);
+        if (!gameObject.activeSelf) gameObject.SetActive(true);
+        if (completePanel != null) completePanel.SetActive(true);
+
+        // Objectives and the completion buttons share PlayerCam's gameplay state.
+        foreach (var root in gameObject.scene.GetRootGameObjects())
+        {
+            var playerCam = root.GetComponentInChildren<PlayerCam>(true);
+            if (playerCam == null) continue;
+            playerCam.LevelComplete();
+            return;
+        }
 
         Time.timeScale = 0f;
 

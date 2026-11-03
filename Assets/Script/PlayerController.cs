@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float maxSanity = 100;
     private float currentSanity;
+    [SerializeField, Range(0f, 1f)] private float incomingDamageMultiplier = 0.5f;
 
     [SerializeField]
     private float sanityRegenAmount = 1f;
@@ -44,9 +45,6 @@ public class PlayerController : MonoBehaviour
     private PlayerCam playerCam;
     private bool isGameOver;
 
-    [SerializeField]
-    private float gameOverDelay = 0.2f;
-    private float gameOverTimer;
 
     [SerializeField]
     private CinemachineImpulseSource impulseSource;
@@ -62,27 +60,49 @@ public class PlayerController : MonoBehaviour
     private IInteractable currentInteract;
     private IHoldInteractable currentHoldInteract;
     private bool isHoldingInteract;
+    private bool interactionButtonHeld;
 
     [SerializeField]
     private CleaningTool currentTool = CleaningTool.sponge;
 
     private PlayerCarrySystem playerCarrySystem;
+    private PlayerFootsteps footstepEffects;
+    private DamageScreenFeedback damageFeedback;
     public void Awake()
     {
         MainCamera = Camera.main;
 
         Rb = GetComponent<Rigidbody>();
-        HurtUI.SetActive(false);
+        damageFeedback = GetComponent<DamageScreenFeedback>();
+        if (damageFeedback == null)
+            damageFeedback = gameObject.AddComponent<DamageScreenFeedback>();
+        damageFeedback.Initialize(HurtUI);
         currentSpeed = NormalSpeed;
         currentSanity = maxSanity;
-        gameOverTimer = gameOverDelay;
         Debug.Log("Current Tool: " + currentTool);
 
         playerCarrySystem = GetComponent<PlayerCarrySystem>();
+        footstepEffects = GetComponent<PlayerFootsteps>();
+        if (footstepEffects == null)
+            footstepEffects = gameObject.AddComponent<PlayerFootsteps>();
+    }
+
+    private void OnEnable()
+    {
+        if (interactHitbox != null) interactHitbox.RefreshTool();
+    }
+
+    private void OnDisable()
+    {
+        if (footstepEffects != null) footstepEffects.SetMoving(false);
+        interactionButtonHeld = false;
+        StopCurrentHold();
+        currentHoldInteract = null;
     }
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (isGameOver) return;
         moveInput = context.ReadValue<Vector2>();
         if (moveInput != Vector2.zero)
         {
@@ -98,6 +118,7 @@ public class PlayerController : MonoBehaviour
     }
     public void OnRun(InputAction.CallbackContext context)
     {
+        if (isGameOver) return;
         bool hasItem = playerCarrySystem != null && playerCarrySystem.HasItem();
 
         if (context.performed)
@@ -122,37 +143,21 @@ public class PlayerController : MonoBehaviour
 
     private void OnInteract(InputAction.CallbackContext context)
     {
-        // ตรวจสอบว่า Hold Interactable ถูก Destroy ไปแล้วหรือไม่
-        if (currentHoldInteract is UnityEngine.Object holdObject &&
-            holdObject == null)
+        if (isGameOver) return;
+        ValidateHoldTarget();
+        if (context.canceled)
         {
-            currentHoldInteract = null;
-            isHoldingInteract = false;
-        }
-
-        if (currentHoldInteract != null)
-        {
-            if (context.started)
-            {
-                isHoldingInteract = true;
-                currentHoldInteract.BeginHold();
-
-                moveInput = Vector2.zero;
-                Rb.linearVelocity = new Vector3(
-                    0f,
-                    Rb.linearVelocity.y,
-                    0f
-                );
-            }
-            else if (context.canceled)
-            {
-                currentHoldInteract.EndHold();
-                isHoldingInteract = false;
-            }
-
+            interactionButtonHeld = false;
+            StopCurrentHold();
             return;
         }
-
+        if (!context.started && !context.performed) return;
+        interactionButtonHeld = true;
+        if (currentHoldInteract != null)
+        {
+            BeginCurrentHold();
+            return;
+        }
         if (context.performed && currentInteract != null)
         {
             currentInteract.Interact();
@@ -160,16 +165,37 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void BeginCurrentHold()
+    {
+        ValidateHoldTarget();
+        if (currentHoldInteract == null || isHoldingInteract) return;
+        isHoldingInteract = true;
+        currentHoldInteract.BeginHold();
+        if (Rb != null) Rb.linearVelocity = new Vector3(0f, Rb.linearVelocity.y, 0f);
+    }
+
+    private void StopCurrentHold()
+    {
+        ValidateHoldTarget();
+        if (currentHoldInteract != null) currentHoldInteract.EndHold();
+        isHoldingInteract = false;
+    }
+
+    private void ValidateHoldTarget()
+    {
+        if (currentHoldInteract is UnityEngine.Object target && target == null)
+            currentHoldInteract = null;
+        if (currentHoldInteract == null) isHoldingInteract = false;
+    }
+
     public void OnChangeTool(InputAction.CallbackContext context)
     {
+        if (isGameOver) return;
         if (!context.performed)
             return;
 
-        if (currentHoldInteract != null)
-        {
-            currentHoldInteract.EndHold();
-            currentHoldInteract = null;
-        }
+        StopCurrentHold();
+        currentHoldInteract = null;
         if (currentTool == CleaningTool.sponge)
         {
             currentTool = CleaningTool.Broom;
@@ -193,6 +219,8 @@ public class PlayerController : MonoBehaviour
 
     public void Update()
     {
+        if (isGameOver) return;
+        ValidateHoldTarget();
         UpdateMovementSpeed();
 
         Vector3 cameraForward = MainCamera.transform.forward;
@@ -225,6 +253,9 @@ public class PlayerController : MonoBehaviour
 
         Rb.linearVelocity = new Vector3(moveDirection.x * currentSpeed, Rb.linearVelocity.y, moveDirection.z * currentSpeed);
 
+        footstepEffects.SetMoving(moveDirection.sqrMagnitude > 0.01f &&
+            !isHoldingInteract && !isGameOver && currentSanity > 0f);
+
         Animation();
 
         if (moveDirection.sqrMagnitude > 0.01f)
@@ -241,23 +272,14 @@ public class PlayerController : MonoBehaviour
             );
         }
 
-        if (currentHoldInteract != null)
+        if (isHoldingInteract && currentHoldInteract != null)
         {
             currentHoldInteract.UpdateHold(Time.deltaTime);
         }
 
         RegenerateSanity();
 
-        if (currentSanity <= 0f && !isGameOver)
-        {
-            gameOverTimer -= Time.deltaTime;
-
-            if (gameOverTimer <= 0f)
-            {
-                isGameOver = true;
-                playerCam.GameOver();
-            }
-        }
+        if (currentSanity <= 0f) FinishGameOver();
     }
 
     public void SetInteractable(IInteractable interactable)
@@ -275,13 +297,20 @@ public class PlayerController : MonoBehaviour
 
     public void SetHoldInteractable(IHoldInteractable interactable)
     {
-        currentHoldInteract = interactable;
+        ValidateHoldTarget();
+        if (!ReferenceEquals(currentHoldInteract, interactable))
+        {
+            StopCurrentHold();
+            currentHoldInteract = interactable;
+        }
+        if (interactionButtonHeld) BeginCurrentHold();
     }
 
     public void RemoveHoldInteractable(IHoldInteractable interactable)
     {
-        if (currentHoldInteract == interactable)
+        if (ReferenceEquals(currentHoldInteract, interactable))
         {
+            StopCurrentHold();
             currentHoldInteract = null;
         }
     }
@@ -290,22 +319,43 @@ public class PlayerController : MonoBehaviour
         if (isGameOver)
             return;
 
-        currentSanity -= damage;
+        currentSanity -= Mathf.Max(0f, damage) * incomingDamageMultiplier;
 
-        StartCoroutine(ShowSanityDamageUI());
+        damageFeedback.ShowDamage();
 
         if (currentSanity <= 0f)
         {
             currentSanity = 0f;
+            FinishGameOver();
             return;
         }
         Debug.Log("Sanity: " + currentSanity + " / " + maxSanity);
     }
+    private void FinishGameOver()
+    {
+        if (isGameOver) return;
+        isGameOver = true;
+        currentSanity = 0f;
+        interactionButtonHeld = false;
+        StopCurrentHold();
+        if (footstepEffects != null) footstepEffects.SetMoving(false);
+        if (Rb != null) Rb.linearVelocity = Vector3.zero;
+        if (playerCam == null) playerCam = FindAnyObjectByType<PlayerCam>();
+        if (playerCam != null) playerCam.GameOver();
+        else
+        {
+            var sequence = GetComponent<GameOverSequence>();
+            if (sequence == null) sequence = gameObject.AddComponent<GameOverSequence>();
+            sequence.Show("MainMenu");
+        }
+    }
+
     public void BigShake()
     {
         if (impulseSource != null)
         {
             impulseSource.GenerateImpulse(bigShakeForce);
+            damageFeedback.PlayShakeSound(true);
         }
     }
     public void SmallShake()
@@ -313,6 +363,7 @@ public class PlayerController : MonoBehaviour
         if (impulseSource != null)
         {
             impulseSource.GenerateImpulse(smallShakeForce);
+            damageFeedback.PlayShakeSound(false);
         }
     }
     public float GetSanity()
@@ -322,14 +373,6 @@ public class PlayerController : MonoBehaviour
     public float GetMaxSanity()
     {
         return maxSanity;
-    }
-    private IEnumerator ShowSanityDamageUI()
-    {
-        HurtUI.SetActive(true);
-
-        yield return new WaitForSeconds(0.2f);
-
-        HurtUI.SetActive(false);
     }
     private void UpdateMovementSpeed()
     {

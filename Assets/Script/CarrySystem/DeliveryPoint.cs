@@ -1,104 +1,72 @@
-
 using UnityEngine;
 
 public class DeliveryPoint : MonoBehaviour, IInteractable
 {
+    [Header("Room Objective")]
+    [SerializeField, Tooltip("Room name displayed in the delivery objective.")]
+    private string roomName = "Delivery";
+
+    [SerializeField, Min(-1), Tooltip("Required deliveries. 0 disables this room task; -1 uses the furniture list length.")]
+    private int requiredItems = -1;
+
     [Header("Delivery Settings")]
-    [SerializeField]
-    private GameObject[] objectsToActivate;
+    [SerializeField] private GameObject[] objectsToActivate;
 
     private PlayerCarrySystem playerCarrySystem;
     private DeliveryObjectiveManager objectiveManager;
-
     private int deliveredCount;
 
     private void Awake()
     {
-        playerCarrySystem = FindFirstObjectByType<PlayerCarrySystem>();
-
-        objectiveManager =
-            FindFirstObjectByType<DeliveryObjectiveManager>();
+        playerCarrySystem = FindAnyObjectByType<PlayerCarrySystem>();
+        objectiveManager = FindAnyObjectByType<DeliveryObjectiveManager>();
     }
 
     private void Start()
     {
         deliveredCount = 0;
-
-        // ปิด Object ทั้งหมดเมื่อเริ่มเกม
-        foreach (GameObject obj in objectsToActivate)
-        {
-            if (obj != null)
-            {
-                obj.SetActive(false);
-            }
-        }
+        bool noTask = GetCapacity() == 0;
+        if (objectsToActivate != null)
+            foreach (var item in objectsToActivate)
+                if (item != null) item.SetActive(noTask);
+        if (noTask) HideDeliveryPoint();
     }
 
     public void Interact()
     {
-        // ตรวจสอบ Capacity
-        if (deliveredCount >= objectsToActivate.Length)
+        if (deliveredCount >= GetCapacity() || playerCarrySystem == null) return;
+        if (objectiveManager != null && !objectiveManager.CanAcceptDelivery(this)) return;
+        if (!playerCarrySystem.TryDeliver()) return;
+
+        if (objectsToActivate != null && deliveredCount < objectsToActivate.Length)
         {
-            Debug.Log("Delivery Point เต็มแล้ว");
-            return;
+            var item = objectsToActivate[deliveredCount];
+            if (item != null) item.SetActive(true);
         }
+        deliveredCount++;
 
-        if (playerCarrySystem == null)
+        // Completing a room reveals its final furniture, even if its quota
+        // differs from the number of furniture visuals.
+        if (deliveredCount >= GetCapacity())
         {
-            Debug.LogError("ไม่พบ PlayerCarrySystem");
-            return;
+            if (objectsToActivate != null)
+                foreach (var item in objectsToActivate)
+                    if (item != null) item.SetActive(true);
+            HideDeliveryPoint();
         }
-
-        // ตรวจสอบว่าผู้เล่นมีสิ่งของหรือไม่
-        if (!playerCarrySystem.HasItem())
-        {
-            Debug.Log("คุณไม่มีสิ่งของที่จะส่ง");
-            return;
-        }
-
-        // ส่งสิ่งของ
-        if (playerCarrySystem.TryDeliver())
-        {
-            // เปิด Object ตามลำดับ
-            GameObject targetObject =
-                objectsToActivate[deliveredCount];
-
-            if (targetObject != null)
-            {
-                targetObject.SetActive(true);
-            }
-
-            deliveredCount++;
-
-            Debug.Log(
-                "Delivery: " + deliveredCount +
-                " / " + objectsToActivate.Length
-            );
-
-            // อัปเดต Objective
-            if (objectiveManager != null)
-            {
-                objectiveManager.ObjectDelivered();
-            }
-            if (deliveredCount >= objectsToActivate.Length)
-            {
-                HideDeliveryPoint();
-            }
-        }
+        if (objectiveManager != null) objectiveManager.ObjectDelivered(this);
+        Debug.Log(GetProgressText());
     }
 
-    public int GetDeliveredCount()
+    public int GetDeliveredCount() => deliveredCount;
+    public int GetCapacity() => requiredItems >= 0
+        ? requiredItems : (objectsToActivate != null ? objectsToActivate.Length : 0);
+
+    public string GetProgressText()
     {
-        return deliveredCount;
+        string label = string.IsNullOrWhiteSpace(roomName) ? gameObject.name : roomName;
+        return label + "  " + deliveredCount + " / " + GetCapacity();
     }
 
-    public int GetCapacity()
-    {
-        return objectsToActivate.Length;
-    }
-
-    private void HideDeliveryPoint()
-    {
-        gameObject.SetActive(false);
-    }
+    private void HideDeliveryPoint() => gameObject.SetActive(false);
 }

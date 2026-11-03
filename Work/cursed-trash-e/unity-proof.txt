@@ -1,0 +1,3 @@
+PASS: Cursed trash E prefab verified in live Unity Editor.
+TMP E=1; legacy baked Image enabled=0; correct font; identity prompt rotations; billboard poses=5; radial green fill working; cursed gameplay references preserved.
+Scene and prefab assets were not saved by verification.
