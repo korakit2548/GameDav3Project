@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float RunSpeed = 5;
     [SerializeField, Range(0.1f, 1f)]
-    private float carrySpeedMultiplier = 0.4f;
+    private float carrySpeedMultiplier = 0.36f;
     private float currentSpeed;
 
     [SerializeField]
