@@ -332,7 +332,7 @@ public class PlayerController : MonoBehaviour
 
         float previousSanity = currentSanity;
         currentSanity -= Mathf.Max(0f, sanityDamagePerHit);
-        sanityRegenBlockedUntil = Time.time + 1f;
+        sanityRegenBlockedUntil = Time.time + 3f;
 
         damageFeedback.ShowDamage();
         currentSanity = Mathf.Max(0f, currentSanity);
