@@ -24,19 +24,10 @@ public sealed class HealthChangePopup : MonoBehaviour
     private const int Capacity = 6;
     private readonly List<Popup> pool = new List<Popup>();
     private RectTransform popupRoot;
-    private Popup mostRecent;
 
     public void ShowChange(float amount)
     {
         if (!isActiveAndEnabled || Mathf.Abs(amount) < 0.001f) return;
-        // Combine rapid damage ticks so the bar stays readable.
-        if (mostRecent != null && mostRecent.active && mostRecent.age < 0.18f
-            && Mathf.Sign(mostRecent.amount) == Mathf.Sign(amount))
-        {
-            mostRecent.amount += amount;
-            SetText(mostRecent);
-            return;
-        }
         Popup popup = pool.Find(entry => !entry.active);
         if (popup == null)
         {
@@ -54,7 +45,6 @@ public sealed class HealthChangePopup : MonoBehaviour
         popup.label.transform.SetAsLastSibling();
         SetText(popup);
         Draw(popup);
-        mostRecent = popup;
     }
 
     private Popup CreatePopup()
@@ -129,6 +119,5 @@ public sealed class HealthChangePopup : MonoBehaviour
             popup.active = false;
             if (popup.label != null) popup.label.gameObject.SetActive(false);
         }
-        mostRecent = null;
     }
 }

@@ -6486,7 +6486,7 @@ MonoBehaviour:
   maxSanity: 200
   sanityDamagePerHit: 3
   sanityRegenAmount: 0.2
-  sanityRegenInterval: 3
+  sanityRegenInterval: 5
   HurtUI: {fileID: 0}
   playerCam: {fileID: 1755465443}
   impulseSource: {fileID: 1133113453}
