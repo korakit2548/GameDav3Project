@@ -344,6 +344,11 @@ public class PlayerController : MonoBehaviour
             FinishGameOver();
             return;
         }
+        if (gameObject.scene.name == "Tutorial")
+        {
+            RestoreSanity();
+            sanityRegenTimer = 0f;
+        }
         Debug.Log("Sanity: " + currentSanity + " / " + maxSanity);
     }
     private void FinishGameOver()
@@ -467,15 +472,17 @@ public class PlayerController : MonoBehaviour
 
         if (sanityRegenTimer >= sanityRegenInterval)
         {
-            float previousSanity = currentSanity;
-            currentSanity += sanityRegenAmount;
-
-            currentSanity = Mathf.Min(currentSanity, maxSanity);
-            SanityChanged?.Invoke(currentSanity - previousSanity);
-
+            RestoreSanity();
             sanityRegenTimer = 0f;
 
             Debug.Log("Sanity: " + currentSanity + " / " + maxSanity);
         }
+    }
+
+    private void RestoreSanity()
+    {
+        float previousSanity = currentSanity;
+        currentSanity = Mathf.Min(currentSanity + sanityRegenAmount, maxSanity);
+        SanityChanged?.Invoke(currentSanity - previousSanity);
     }
 }
