@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float maxSanity = 100;
     private float currentSanity;
+    public event System.Action<float> SanityChanged;
     [SerializeField, Range(0f, 1f)] private float incomingDamageMultiplier = 0.5f;
 
     [SerializeField]
@@ -327,9 +328,12 @@ public class PlayerController : MonoBehaviour
         if (isGameOver)
             return;
 
+        float previousSanity = currentSanity;
         currentSanity -= Mathf.Max(0f, damage) * incomingDamageMultiplier;
 
         damageFeedback.ShowDamage();
+        currentSanity = Mathf.Max(0f, currentSanity);
+        SanityChanged?.Invoke(currentSanity - previousSanity);
 
         if (currentSanity <= 0f)
         {
@@ -458,9 +462,11 @@ public class PlayerController : MonoBehaviour
 
         if (sanityRegenTimer >= sanityRegenInterval)
         {
+            float previousSanity = currentSanity;
             currentSanity += sanityRegenAmount;
 
             currentSanity = Mathf.Min(currentSanity, maxSanity);
+            SanityChanged?.Invoke(currentSanity - previousSanity);
 
             sanityRegenTimer = 0f;
 

@@ -8,6 +8,29 @@ public class SanityUI : MonoBehaviour
 
     [SerializeField]
     private Slider sanitySlider;
+    private HealthChangePopup changePopup;
+
+    private void OnEnable()
+    {
+        if (changePopup != null) BindHealthFeedback();
+    }
+
+    private void OnDisable()
+    {
+        if (player != null) player.SanityChanged -= ShowHealthChange;
+    }
+
+    private void BindHealthFeedback()
+    {
+        if (player == null) return;
+        player.SanityChanged -= ShowHealthChange;
+        player.SanityChanged += ShowHealthChange;
+    }
+
+    private void ShowHealthChange(float amount)
+    {
+        if (changePopup != null) changePopup.ShowChange(amount);
+    }
 
     private void Start()
     {
@@ -22,6 +45,9 @@ public class SanityUI : MonoBehaviour
         {
             sanitySlider.maxValue = player.GetMaxSanity();
             sanitySlider.value = player.GetSanity();
+            changePopup = sanitySlider.GetComponent<HealthChangePopup>();
+            if (changePopup == null) changePopup = sanitySlider.gameObject.AddComponent<HealthChangePopup>();
+            BindHealthFeedback();
         }
     }
 

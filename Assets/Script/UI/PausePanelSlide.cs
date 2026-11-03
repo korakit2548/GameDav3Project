@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public sealed class PausePanelSlide : MonoBehaviour
@@ -31,6 +32,7 @@ public sealed class PausePanelSlide : MonoBehaviour
         panel = pausePanel;
         if (panel == null) return;
         MenuButtonHoverAudio.Bind(panel);
+        ApplyButtonHoverStyle();
         group = panel.GetComponent<CanvasGroup>();
         if (group == null) group = panel.AddComponent<CanvasGroup>();
         signs.Clear();
@@ -51,9 +53,44 @@ public sealed class PausePanelSlide : MonoBehaviour
     public void Show()
     {
         if (panel == null || (panel.activeSelf && target == 0f)) return;
+        ApplyButtonHoverStyle();
         onHidden = null;
         panel.SetActive(true);
         Begin(0f, enterDuration);
+    }
+
+    private void ApplyButtonHoverStyle()
+    {
+        foreach (var button in panel.GetComponentsInChildren<Button>(true))
+        {
+            var hover = button.GetComponent<PauseButtonHoverGraphic>();
+            var image = button.targetGraphic as Image;
+            if (hover == null && image != null && image.color.a <= 0.01f)
+            {
+                for (Transform parent = button.transform.parent; parent != null; parent = parent.parent)
+                {
+                    var artwork = parent.GetComponent<Image>();
+                    if (artwork == null || artwork.sprite == null || artwork.color.a <= 0.01f) continue;
+                    hover = button.gameObject.AddComponent<PauseButtonHoverGraphic>();
+                    hover.Configure(artwork);
+                    break;
+                }
+            }
+            bool maskedOverlay = hover != null && hover.Overlay != null;
+            if (maskedOverlay) button.targetGraphic = hover.Overlay;
+            if (button.targetGraphic == null) button.targetGraphic = button.GetComponent<Graphic>();
+            button.transition = Selectable.Transition.ColorTint;
+            var colors = button.colors;
+            colors.normalColor = maskedOverlay ? Color.clear : Color.white;
+            colors.highlightedColor = maskedOverlay ? new Color(0f, 0f, 0f, 0.59f)
+                : new Color(0.4113207f, 0.4113207f, 0.4113207f, 1f);
+            colors.pressedColor = maskedOverlay ? new Color(0f, 0f, 0f, 0.8f) : Color.black;
+            colors.selectedColor = colors.highlightedColor;
+            if (maskedOverlay) colors.disabledColor = Color.clear;
+            colors.colorMultiplier = 1f;
+            colors.fadeDuration = 0.1f;
+            button.colors = colors;
+        }
     }
 
     public void Hide(Action completed)
@@ -98,7 +135,7 @@ public sealed class PausePanelSlide : MonoBehaviour
             signAudio.volume = woodVolume * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((duration - elapsed) / 0.06f));
         float progress = Mathf.Clamp01(elapsed / duration);
         float eased = target == 0f ? 1f - Mathf.Pow(1f - progress, 3f) : Mathf.SmoothStep(0f, 1f, progress);
-        SetOffset(Mathf.Lerp(from, target, eased));
+        SetOffset(progress >= 1f ? target : Mathf.Lerp(from, target, eased));
         if (progress < 1f) return;
         IsAnimating = false;
         StopSignSound();
