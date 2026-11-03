@@ -31,10 +31,10 @@ public class PlayerController : MonoBehaviour
     float maxSanity = 100;
     private float currentSanity;
     public event System.Action<float> SanityChanged;
-    [SerializeField, Min(0f)] private float sanityDamagePerHit = 2.5f;
+    [SerializeField, Min(0f)] private float sanityDamagePerHit = 3f;
 
     [SerializeField]
-    private float sanityRegenAmount = 1f;
+    private float sanityRegenAmount = 0.2f;
     [SerializeField]
     private float sanityRegenInterval = 3f;
 

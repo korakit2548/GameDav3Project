@@ -6484,8 +6484,8 @@ MonoBehaviour:
   RunSpeed: 10
   RotationSpeed: 3
   maxSanity: 200
-  incomingDamageMultiplier: 0.5
-  sanityRegenAmount: 1
+  sanityDamagePerHit: 3
+  sanityRegenAmount: 0.2
   sanityRegenInterval: 3
   HurtUI: {fileID: 0}
   playerCam: {fileID: 1755465443}

@@ -1,16 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 [DisallowMultipleComponent]
-public sealed class PauseButtonHoverGraphic : MonoBehaviour
+public sealed class PauseButtonHoverGraphic : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     private Image artwork;
     private Image overlay;
+    private Button button;
+    private bool pointerInside;
+    private float opacity;
     public Image Overlay => overlay;
 
     public Image Configure(Image source)
     {
         artwork = source;
+        button = GetComponent<Button>();
         if (overlay == null)
         {
             var mask = new GameObject("Pause Button Hover Mask", typeof(RectTransform), typeof(RectMask2D));
@@ -35,7 +40,27 @@ public sealed class PauseButtonHoverGraphic : MonoBehaviour
         return overlay;
     }
 
-    private void LateUpdate() { SynchronizeArtwork(); }
+    public void OnPointerEnter(PointerEventData eventData) { pointerInside = true; }
+    public void OnPointerExit(PointerEventData eventData) { pointerInside = false; }
+
+    private void OnEnable() { ResetHover(); }
+    private void OnDisable() { ResetHover(); }
+
+    private void ResetHover()
+    {
+        pointerInside = false;
+        opacity = 0f;
+        if (overlay != null) overlay.canvasRenderer.SetColor(Color.clear);
+    }
+
+    private void LateUpdate()
+    {
+        SynchronizeArtwork();
+        if (overlay == null) return;
+        float target = pointerInside && button != null && button.IsActive() && button.IsInteractable() ? 0.59f : 0f;
+        opacity = Mathf.MoveTowards(opacity, target, Time.unscaledDeltaTime * 5.9f);
+        overlay.canvasRenderer.SetColor(new Color(0f, 0f, 0f, opacity));
+    }
 
     private void SynchronizeArtwork()
     {

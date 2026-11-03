@@ -88,7 +88,7 @@ public sealed class PausePanelSlide : MonoBehaviour
             bool maskedOverlay = hover != null && hover.Overlay != null;
             if (maskedOverlay) button.targetGraphic = hover.Overlay;
             if (button.targetGraphic == null) button.targetGraphic = button.GetComponent<Graphic>();
-            button.transition = Selectable.Transition.ColorTint;
+            button.transition = maskedOverlay ? Selectable.Transition.None : Selectable.Transition.ColorTint;
             var colors = button.colors;
             colors.normalColor = maskedOverlay ? Color.clear : Color.white;
             colors.highlightedColor = maskedOverlay ? new Color(0f, 0f, 0f, 0.59f)
