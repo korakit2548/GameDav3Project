@@ -13,7 +13,7 @@ public class CleaningController : MonoBehaviour
     private GameObject currentTool;
     private CleaningVisualFeedback visualFeedback;
     private PlayerActionAudio actionAudio;
-
+    private PlayerCarrySystem playerCarrySystem;
     public void Configure(Animator target, GameplayAnimationSet animations)
     {
         if (animator == null) animator = target;
@@ -37,9 +37,15 @@ public class CleaningController : MonoBehaviour
         StopCleaning();
         if (animator == null) return;
 
+        if (playerCarrySystem == null)
+            playerCarrySystem = GetComponent<PlayerCarrySystem>();
+
         switch (action)
         {
             case CleaningAction.Sweeping:
+                if (playerCarrySystem != null)
+                    playerCarrySystem.SetCarryVisual(false);
+
                 EquipTool(broomPrefab);
                 animator.SetBool("IsSweeping", true);
                 break;
@@ -61,6 +67,10 @@ public class CleaningController : MonoBehaviour
 
     public void StopCleaning()
     {
+
+        if (playerCarrySystem != null)
+            playerCarrySystem.SetCarryVisual(true);
+
         if (visualFeedback != null) visualFeedback.Stop();
         if (actionAudio != null) actionAudio.StopCleaning();
         if (animator != null)

@@ -331,24 +331,28 @@ public class PlayerController : MonoBehaviour
             return;
 
         float previousSanity = currentSanity;
-        currentSanity -= Mathf.Max(0f, sanityDamagePerHit);
+
+        currentSanity -= damage;
+        currentSanity = Mathf.Max(0f, currentSanity);
+
         sanityRegenBlockedUntil = Time.time + 3f;
 
         damageFeedback.ShowDamage();
-        currentSanity = Mathf.Max(0f, currentSanity);
+
         SanityChanged?.Invoke(currentSanity - previousSanity);
 
         if (currentSanity <= 0f)
         {
-            currentSanity = 0f;
             FinishGameOver();
             return;
         }
+
         if (gameObject.scene.name == "Tutorial")
         {
             RestoreSanity();
             sanityRegenTimer = 0f;
         }
+
         Debug.Log("Sanity: " + currentSanity + " / " + maxSanity);
     }
     private void FinishGameOver()

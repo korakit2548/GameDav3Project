@@ -85,4 +85,12 @@ public class PlayerCarrySystem : MonoBehaviour
     {
         return carriedItem;
     }
+
+    public void SetCarryVisual(bool visible)
+    {
+        if (currentCarriedObject != null)
+        {
+            currentCarriedObject.SetActive(visible);
+        }
+    }
 }

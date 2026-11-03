@@ -5107,9 +5107,9 @@ MonoBehaviour:
   carrySpeedMultiplier: 0.4
   RotationSpeed: 3
   maxSanity: 200
-  sanityDamagePerHit: 3
-  sanityRegenAmount: 0.1
-  sanityRegenInterval: 7
+  sanityDamagePerHit: 10
+  sanityRegenAmount: 4
+  sanityRegenInterval: 5
   HurtUI: {fileID: 0}
   playerCam: {fileID: 1755465443}
   impulseSource: {fileID: 1133113453}
