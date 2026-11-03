@@ -505,7 +505,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '      Exit'
+  m_text: '   Exit'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fe0c90dc073ecf242bb21005278625ef, type: 2}
   m_sharedMaterial: {fileID: 559995441952429512, guid: fe0c90dc073ecf242bb21005278625ef, type: 2}
@@ -532,8 +532,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 54.1
+  m_fontSizeBase: 54.1
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2707,6 +2707,6 @@ SceneRoots:
   - {fileID: 783278173}
   - {fileID: 2062166148}
   - {fileID: 632147241}
-  - {fileID: 1339883769}
   - {fileID: 1691567769}
   - {fileID: 623273402}
+  - {fileID: 1339883769}
