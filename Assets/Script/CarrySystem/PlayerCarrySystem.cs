@@ -38,6 +38,7 @@ public class PlayerCarrySystem : MonoBehaviour
         }
 
         carriedItem = itemName;
+        PlayerActionAudio.GetOrCreate(gameObject).PlayPickup();
         if (carryPoint != null && carriedBoxPrefab != null)
         {
             currentCarriedObject = Instantiate(
@@ -75,6 +76,7 @@ public class PlayerCarrySystem : MonoBehaviour
         }
 
         carriedItem = null;
+        PlayerActionAudio.GetOrCreate(gameObject).PlayPlace();
 
         return true;
     }

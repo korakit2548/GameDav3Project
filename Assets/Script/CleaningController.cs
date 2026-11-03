@@ -11,6 +11,8 @@ public class CleaningController : MonoBehaviour
     [SerializeField] private GameObject spongePrefab;
 
     private GameObject currentTool;
+    private CleaningVisualFeedback visualFeedback;
+    private PlayerActionAudio actionAudio;
 
     public void Configure(Animator target, GameplayAnimationSet animations)
     {
@@ -30,7 +32,7 @@ public class CleaningController : MonoBehaviour
         }
     }
 
-    public void StartCleaning(CleaningAction action)
+    public void StartCleaning(CleaningAction action, Transform surface = null)
     {
         StopCleaning();
         if (animator == null) return;
@@ -47,10 +49,20 @@ public class CleaningController : MonoBehaviour
                 animator.SetBool("IsWiping", true);
                 break;
         }
+        if (visualFeedback == null)
+        {
+            visualFeedback = GetComponent<CleaningVisualFeedback>();
+            if (visualFeedback == null) visualFeedback = gameObject.AddComponent<CleaningVisualFeedback>();
+        }
+        visualFeedback.Play(action, currentTool != null ? currentTool.transform : null, surface);
+        if (actionAudio == null) actionAudio = PlayerActionAudio.GetOrCreate(gameObject);
+        actionAudio.PlayCleaning(action);
     }
 
     public void StopCleaning()
     {
+        if (visualFeedback != null) visualFeedback.Stop();
+        if (actionAudio != null) actionAudio.StopCleaning();
         if (animator != null)
         {
             animator.SetBool("IsSweeping", false);
@@ -63,6 +75,8 @@ public class CleaningController : MonoBehaviour
             currentTool = null;
         }
     }
+
+    private void OnDisable() { StopCleaning(); }
 
     private void EquipTool(GameObject prefab)
     {

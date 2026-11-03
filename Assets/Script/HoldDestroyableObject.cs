@@ -36,7 +36,7 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
 
         if (cleaningController != null)
         {
-            cleaningController.StartCleaning(cleaningAction);
+            cleaningController.StartCleaning(cleaningAction, transform);
         }
 
         //Debug.Log("����������");
