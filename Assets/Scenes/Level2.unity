@@ -6485,7 +6485,7 @@ MonoBehaviour:
   RotationSpeed: 3
   maxSanity: 200
   sanityDamagePerHit: 3
-  sanityRegenAmount: 0.2
+  sanityRegenAmount: 0.1
   sanityRegenInterval: 5
   HurtUI: {fileID: 0}
   playerCam: {fileID: 1755465443}

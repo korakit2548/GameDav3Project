@@ -9,7 +9,7 @@ public sealed class HealthChangePopup : MonoBehaviour
 {
     [SerializeField] private TMP_FontAsset font;
     [SerializeField, Min(0.1f)] private float lifetime = 0.85f;
-    [SerializeField, Min(0f)] private float riseDistance = 55f;
+    [SerializeField, Min(0f)] private float riseDistance = 70f;
     [SerializeField] private Color damageColor = new Color(1f, 0.12f, 0.16f);
     [SerializeField] private Color healingColor = new Color(0.25f, 1f, 0.4f);
 
@@ -19,11 +19,13 @@ public sealed class HealthChangePopup : MonoBehaviour
         public float amount;
         public float age;
         public bool active;
+        public int lane;
     }
 
     private const int Capacity = 6;
     private readonly List<Popup> pool = new List<Popup>();
     private RectTransform popupRoot;
+    private int nextLane;
 
     public void ShowChange(float amount)
     {
@@ -41,6 +43,7 @@ public sealed class HealthChangePopup : MonoBehaviour
         popup.amount = amount;
         popup.age = 0f;
         popup.active = true;
+        popup.lane = nextLane++ % 3;
         popup.label.gameObject.SetActive(true);
         popup.label.transform.SetAsLastSibling();
         SetText(popup);
@@ -65,7 +68,10 @@ public sealed class HealthChangePopup : MonoBehaviour
         child.transform.SetParent(popupRoot, false);
         var label = child.GetComponent<TextMeshProUGUI>();
         label.font = font != null ? font : TMP_Settings.defaultFontAsset;
-        label.fontSize = 44f;
+        label.fontSize = 52f;
+        label.fontStyle = FontStyles.Bold;
+        label.outlineColor = new Color(0f, 0f, 0f, 0.9f);
+        label.outlineWidth = 0.15f;
         label.alignment = TextAlignmentOptions.Center;
         label.textWrappingMode = TextWrappingModes.NoWrap;
         label.raycastTarget = false;
@@ -102,7 +108,8 @@ public sealed class HealthChangePopup : MonoBehaviour
     {
         float progress = Mathf.Clamp01(popup.age / Mathf.Max(0.1f, lifetime));
         float rise = 1f - Mathf.Pow(1f - progress, 3f);
-        popup.label.rectTransform.anchoredPosition = new Vector2(popup.amount < 0f ? -75f : 75f, 14f + riseDistance * rise);
+        float side = popup.amount < 0f ? -1f : 1f;
+        popup.label.rectTransform.anchoredPosition = new Vector2(side * (105f + popup.lane * 42f), 30f + riseDistance * rise);
         float scale = popup.age < 0.14f
             ? Mathf.Lerp(0.7f, 1.2f, popup.age / 0.14f)
             : Mathf.Lerp(1.2f, 1f, Mathf.Clamp01((popup.age - 0.14f) / 0.16f));
