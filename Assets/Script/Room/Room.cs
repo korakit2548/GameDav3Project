@@ -119,7 +119,7 @@ public class Room : MonoBehaviour
     {
         playerInside = true;
 
-        player = FindFirstObjectByType<PlayerController>();
+        player = FindAnyObjectByType<PlayerController>();
 
         //Debug.Log("Player เข้า " + gameObject.name);
 

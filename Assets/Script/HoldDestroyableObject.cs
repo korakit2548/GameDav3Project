@@ -18,7 +18,7 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
 
     private void Awake()
     {
-        cleaningController = FindFirstObjectByType<CleaningController>();
+        cleaningController = FindAnyObjectByType<CleaningController>();
     }
 
     public void BeginHold()
@@ -97,7 +97,7 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
             return;
         }
 
-        ObjectiveManager objectiveManager = FindFirstObjectByType<ObjectiveManager>();
+        ObjectiveManager objectiveManager = FindAnyObjectByType<ObjectiveManager>();
 
         if (objectiveManager != null)
         {

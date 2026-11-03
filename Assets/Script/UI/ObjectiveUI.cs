@@ -19,7 +19,7 @@ public class ObjectiveUI : MonoBehaviour
     private void Start()
     {
         objectiveManager =
-            FindFirstObjectByType<ObjectiveManager>();
+            FindAnyObjectByType<ObjectiveManager>();
         UpdateUI();
     }
 

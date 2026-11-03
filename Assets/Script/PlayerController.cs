@@ -10,7 +10,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Animator animator;
     private bool isRunning;
-    private bool isIdle;
     private bool isWalking;
 
     [SerializeField]
@@ -116,12 +115,10 @@ public class PlayerController : MonoBehaviour
         if (moveInput != Vector2.zero)
         {
             isWalking = true;
-            isIdle = false;
         }
         else
         {
             isWalking = false;
-            isIdle = true;
         }
 
     }

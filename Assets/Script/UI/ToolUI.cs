@@ -24,7 +24,7 @@ public class ToolUI : MonoBehaviour
 
     private void Start()
     {
-        player = FindFirstObjectByType<PlayerController>();
+        player = FindAnyObjectByType<PlayerController>();
 
         UpdateUI();
     }

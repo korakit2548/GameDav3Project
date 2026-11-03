@@ -16,7 +16,7 @@ public class PickupStation : MonoBehaviour, IInteractable
 
     private void Awake()
     {
-        playerCarrySystem = FindFirstObjectByType<PlayerCarrySystem>();
+        playerCarrySystem = FindAnyObjectByType<PlayerCarrySystem>();
     }
 
     private void Start()

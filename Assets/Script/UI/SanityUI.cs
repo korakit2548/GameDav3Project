@@ -15,7 +15,7 @@ public class SanityUI : MonoBehaviour
 
         if (player == null)
         {
-            player = FindFirstObjectByType<PlayerController>();
+            player = FindAnyObjectByType<PlayerController>();
         }
 
         if (player != null && sanitySlider != null)

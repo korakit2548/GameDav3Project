@@ -24,7 +24,7 @@ public class DeliveryObjectiveUI : MonoBehaviour
     private void Start()
     {
         objectiveManager =
-            FindFirstObjectByType<DeliveryObjectiveManager>();
+            FindAnyObjectByType<DeliveryObjectiveManager>();
 
         UpdateUI();
     }

@@ -16,7 +16,7 @@ public class CarryItemUI : MonoBehaviour
 
     private void Start()
     {
-        playerCarrySystem = FindFirstObjectByType<PlayerCarrySystem>();
+        playerCarrySystem = FindAnyObjectByType<PlayerCarrySystem>();
 
         itemImage.gameObject.SetActive(false);
     }
