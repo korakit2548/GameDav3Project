@@ -20,6 +20,8 @@ public sealed class GameOverSequence : MonoBehaviour
     [Header("Game Over Sound")]
     [SerializeField] private AudioClip gameOverClip;
     [SerializeField, Range(0f, 1f)] private float gameOverVolume = 0.8f;
+    [SerializeField] private AudioClip gameOverMusic;
+    [SerializeField, Range(0f, 1f)] private float gameOverMusicVolume = 0.32f;
 
     private struct AmbientVoice
     {
@@ -31,11 +33,13 @@ public sealed class GameOverSequence : MonoBehaviour
     private Image black;
     private CanvasGroup menu;
     private AudioSource deathAudio;
+    private AudioSource deathMusic;
     private string restartScene;
     private string mainMenuScene;
     private float elapsed;
     private bool started;
     private bool soundStarted;
+    private bool musicStarted;
 
     public void Show(string menuSceneName = "MainMenu")
     {
@@ -52,6 +56,7 @@ public sealed class GameOverSequence : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         CreateScreen();
+        MenuButtonHoverAudio.Bind(screen);
         CreateSound();
     }
 
@@ -67,6 +72,15 @@ public sealed class GameOverSequence : MonoBehaviour
             soundStarted = true;
             if (deathAudio != null && deathAudio.clip != null) deathAudio.Play();
         }
+        float stingDuration = deathAudio != null && deathAudio.clip != null ? deathAudio.clip.length : 0f;
+        float musicTime = elapsed - fadeTime - stingDuration;
+        if (!musicStarted && soundStarted && musicTime >= 0f && deathMusic != null && deathMusic.clip != null)
+        {
+            musicStarted = true;
+            deathMusic.Play();
+        }
+        if (musicStarted)
+            deathMusic.volume = gameOverMusicVolume * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(musicTime));
         float amount = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / fadeTime));
         black.color = new Color(0f, 0f, 0f, amount);
         foreach (var voice in ambience)
@@ -216,6 +230,14 @@ public sealed class GameOverSequence : MonoBehaviour
         deathAudio.priority = 16;
         deathAudio.volume = gameOverVolume;
         deathAudio.clip = gameOverClip != null ? gameOverClip : Resources.Load<AudioClip>("GameOver/GameOverSting");
+        deathMusic = voice.AddComponent<AudioSource>();
+        deathMusic.playOnAwake = false;
+        deathMusic.loop = true;
+        deathMusic.spatialBlend = 0f;
+        deathMusic.ignoreListenerPause = true;
+        deathMusic.priority = 48;
+        deathMusic.volume = 0f;
+        deathMusic.clip = gameOverMusic != null ? gameOverMusic : Resources.Load<AudioClip>("GameOver/GameOverMusic");
     }
 
     public void RestartGame()

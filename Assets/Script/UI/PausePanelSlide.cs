@@ -30,6 +30,7 @@ public sealed class PausePanelSlide : MonoBehaviour
         if (panel == pausePanel && group != null) return;
         panel = pausePanel;
         if (panel == null) return;
+        MenuButtonHoverAudio.Bind(panel);
         group = panel.GetComponent<CanvasGroup>();
         if (group == null) group = panel.AddComponent<CanvasGroup>();
         signs.Clear();

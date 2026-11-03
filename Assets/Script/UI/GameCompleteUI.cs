@@ -19,6 +19,7 @@ public class GameCompleteUI : MonoBehaviour
 
         if (!gameObject.activeSelf) gameObject.SetActive(true);
         if (completePanel != null) completePanel.SetActive(true);
+        MenuButtonHoverAudio.Bind(completePanel != null ? completePanel : gameObject);
 
         // Objectives and the completion buttons share PlayerCam's gameplay state.
         foreach (var root in gameObject.scene.GetRootGameObjects())

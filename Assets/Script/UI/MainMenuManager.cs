@@ -10,6 +10,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void Awake()
     {
+        foreach (var root in gameObject.scene.GetRootGameObjects()) MenuButtonHoverAudio.Bind(root);
         if (GetComponent<MainMenuAtmosphereMotion>() == null)
             gameObject.AddComponent<MainMenuAtmosphereMotion>();
         if (GetComponent<MainMenuWind>() == null)
