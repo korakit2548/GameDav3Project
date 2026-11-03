@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private float RunSpeed = 5;
+    [SerializeField, Range(0.1f, 1f)]
+    private float carrySpeedMultiplier = 0.65f;
     private float currentSpeed;
 
     [SerializeField]
@@ -386,7 +388,7 @@ public class PlayerController : MonoBehaviour
 
         if (hasItem)
         {
-            currentSpeed = NormalSpeed;
+            currentSpeed = NormalSpeed * carrySpeedMultiplier;
             isRunning = false;
         }
         else
