@@ -12,6 +12,8 @@ public class MainMenuManager : MonoBehaviour
     {
         if (GetComponent<MainMenuAtmosphereMotion>() == null)
             gameObject.AddComponent<MainMenuAtmosphereMotion>();
+        if (GetComponent<MainMenuWind>() == null)
+            gameObject.AddComponent<MainMenuWind>();
     }
 
     private void OnEnable() { ShowCursor(); }
@@ -26,6 +28,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void Play()
     {
+        MenuFeedbackAudio.PlayClick();
         PrepareSceneChange();
         Time.timeScale = 1f;
         SceneManager.LoadScene(gameSceneName);
@@ -33,6 +36,7 @@ public class MainMenuManager : MonoBehaviour
 
     public void OpenTutorial()
     {
+        MenuFeedbackAudio.PlayClick();
         PrepareSceneChange();
         Time.timeScale = 1f;
         SceneManager.LoadScene(tutorialSceneName);
@@ -41,7 +45,7 @@ public class MainMenuManager : MonoBehaviour
     public void Quit()
     {
         Debug.Log("Quit Game");
-        Application.Quit();
+        MenuFeedbackAudio.QuitAfterClick();
     }
 
     private static void PrepareSceneChange()

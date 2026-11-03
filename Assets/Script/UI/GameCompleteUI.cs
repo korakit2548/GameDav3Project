@@ -29,6 +29,7 @@ public class GameCompleteUI : MonoBehaviour
             return;
         }
 
+        MenuFeedbackAudio.PlayLevelComplete();
         Time.timeScale = 0f;
 
         Cursor.lockState = CursorLockMode.None;

@@ -7,8 +7,10 @@ public sealed class CleaningVisualFeedback : MonoBehaviour
     [Header("Cleaning Particles")]
     [SerializeField, Min(0f)] private float dustRate = 40f;
     [SerializeField, Min(0f)] private float wipeRate = 45f;
+    [SerializeField, ColorUsage(true, true)] private Color wipeColor = new Color(1.3f, 0.012f, 0.02f, 0.85f);
 
     private ParticleSystem particles;
+    private Material particleMaterial;
     private Transform activeTool;
     private Transform surface;
     private Renderer[] toolRenderers;
@@ -30,6 +32,8 @@ public sealed class CleaningVisualFeedback : MonoBehaviour
         action = cleaningAction;
 
         bool sweeping = action == CleaningAction.Sweeping;
+        if (particleMaterial != null)
+            particleMaterial.SetColor("_BaseColor", sweeping ? Color.white : new Color(2.2f, 1f, 1f, 1f));
         var main = particles.main;
         main.startLifetime = new ParticleSystem.MinMaxCurve(sweeping ? 0.6f : 0.35f, sweeping ? 1f : 0.7f);
         main.startSize = new ParticleSystem.MinMaxCurve(sweeping ? 0.15f : 0.04f, sweeping ? 0.32f : 0.1f);
@@ -37,7 +41,7 @@ public sealed class CleaningVisualFeedback : MonoBehaviour
         main.gravityModifier = sweeping ? -0.015f : 0.15f;
         main.startColor = sweeping
             ? new ParticleSystem.MinMaxGradient(new Color(0.72f, 0.67f, 0.56f, 0.6f), new Color(0.88f, 0.84f, 0.73f, 0.7f))
-            : new ParticleSystem.MinMaxGradient(new Color(0.65f, 0.38f, 0.34f, 0.7f), new Color(0.94f, 0.97f, 0.95f, 0.85f));
+            : new ParticleSystem.MinMaxGradient(new Color(wipeColor.r * 0.7f, wipeColor.g, wipeColor.b, wipeColor.a), wipeColor);
         var shape = particles.shape;
         shape.radius = sweeping ? 0.1f : 0.035f;
         var emission = particles.emission;
@@ -73,7 +77,9 @@ public sealed class CleaningVisualFeedback : MonoBehaviour
         size.enabled = true;
         size.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.Linear(0f, 0.6f, 1f, 1.5f));
         var renderer = child.GetComponent<ParticleSystemRenderer>();
-        renderer.sharedMaterial = Resources.Load<Material>("PlayerActions/SoftDust");
+        var template = Resources.Load<Material>("PlayerActions/SoftDust");
+        if (template != null) particleMaterial = new Material(template);
+        renderer.sharedMaterial = particleMaterial;
         renderer.shadowCastingMode = ShadowCastingMode.Off;
         renderer.receiveShadows = false;
         renderer.lightProbeUsage = LightProbeUsage.Off;
@@ -145,5 +151,10 @@ public sealed class CleaningVisualFeedback : MonoBehaviour
     {
         Stop();
         if (particles != null) particles.Clear();
+    }
+
+    private void OnDestroy()
+    {
+        if (particleMaterial != null) Destroy(particleMaterial);
     }
 }

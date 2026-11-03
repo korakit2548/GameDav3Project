@@ -221,6 +221,7 @@ public sealed class GameOverSequence : MonoBehaviour
     public void RestartGame()
     {
         if (menu == null || !menu.interactable) return;
+        MenuFeedbackAudio.PlayClick();
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -230,6 +231,7 @@ public sealed class GameOverSequence : MonoBehaviour
     public void ReturnToMainMenu()
     {
         if (menu == null || !menu.interactable) return;
+        MenuFeedbackAudio.PlayClick();
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

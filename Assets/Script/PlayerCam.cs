@@ -202,6 +202,7 @@ public class PlayerCam : MonoBehaviour
     public void ResumeGame()
     {
         if (isGameOver || isLevelComplete || SceneFadeTransition.IsTransitioning) return;
+        MenuFeedbackAudio.PlayClick();
         if (pauseSlide != null) pauseSlide.Hide(CompleteResume);
         else CompleteResume();
     }
@@ -240,6 +241,7 @@ public class PlayerCam : MonoBehaviour
             return;
 
         isLevelComplete = true;
+        MenuFeedbackAudio.PlayLevelComplete();
         isPaused = false;
 
         if (pauseSlide != null) pauseSlide.HideImmediate();
@@ -256,11 +258,15 @@ public class PlayerCam : MonoBehaviour
     // ªÿË¡‰ª¥Ë“π∂—¥‰ª
     public void GoToNextLevel()
     {
+        if (SceneFadeTransition.IsTransitioning) return;
+        MenuFeedbackAudio.PlayClick();
         SceneFadeTransition.LoadGameplayScene(nextLevelSceneName);
     }
 
     public void GoToMainMenu()
     {
+        if (SceneFadeTransition.IsTransitioning) return;
+        MenuFeedbackAudio.PlayClick();
         SceneFadeTransition.LoadScene(mainMenuSceneName);
     }
 }
