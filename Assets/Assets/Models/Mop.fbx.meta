@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0f148e5ea0260c045af72173e30de018
+guid: fe0a213cead49074399e56905ba8c98a
 ModelImporter:
   serializedVersion: 24501
   internalIDToNameTable: []
@@ -7,53 +7,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material
-    second: {fileID: 2100000, guid: 5d62e122f59ac214189e6252ddb8a2bc, type: 2}
+      name: Bloom_M
+    second: {fileID: 2100000, guid: 127fe41c946e1a34c94675c81888821f, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material.001
-    second: {fileID: 2100000, guid: f64eebec1bc85894889aa4544b60e3ad, type: 2}
+      name: metal_M
+    second: {fileID: 2100000, guid: 932d5916102a9364d9c88bfe7bc67cb1, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Material.002
-    second: {fileID: 2100000, guid: dd6bf61a2c2206347af28536f686d3e5, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.003
-    second: {fileID: 2100000, guid: 199c9d458e235d0428f2df8c033ccc2d, type: 2}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: mycharacter - Coy_Material_BaseMap
-    second: {fileID: 2800000, guid: 7b566674d8e386c4481f677bb80baf7d, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: mycharacter - Coy_Material_Normal
-    second: {fileID: 2800000, guid: 808298c0110bc544dada305e6e8cb2ef, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: mycharacter - Eye_Material.001_BaseMap
-    second: {fileID: 2800000, guid: 737c112df5069da4cad3ad20a7d94766, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: mycharacter - Eye_Material.001_Normal
-    second: {fileID: 2800000, guid: a6257bd53a0ce91468d13a33b242abf3, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: mycharacter - Eye_Material.002_BaseMap
-    second: {fileID: 2800000, guid: 474c17e7342f196429cebccdcb8773e9, type: 3}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: mycharacter - Eye_Material.002_Normal
-    second: {fileID: 2800000, guid: a94313297ba940e4b874d8a33021c120, type: 3}
+      name: wood_M
+    second: {fileID: 2100000, guid: 3f278f13418f032429cfdf8aae768b5e, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
 
     private float sanityRegenTimer;
 
-    [SerializeField] 
+    [SerializeField]
     private GameObject HurtUI;
 
     [SerializeField]
@@ -82,6 +82,15 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Current Tool: " + currentTool);
 
         playerCarrySystem = GetComponent<PlayerCarrySystem>();
+        var animations = GameplayAnimationSet.Load();
+        if (animations != null && animator != null)
+        {
+            animator.runtimeAnimatorController = animations.controller;
+            var cleaning = GetComponent<CleaningController>();
+            if (cleaning == null) cleaning = gameObject.AddComponent<CleaningController>();
+            cleaning.Configure(animator, animations);
+            if (playerCarrySystem != null) playerCarrySystem.Configure(animator, animations);
+        }
         footstepEffects = GetComponent<PlayerFootsteps>();
         if (footstepEffects == null)
             footstepEffects = gameObject.AddComponent<PlayerFootsteps>();
@@ -390,13 +399,36 @@ public class PlayerController : MonoBehaviour
     }
     private void Animation()
     {
+
         if (isHoldingInteract)
         {
             animator.SetBool("IsIdle", true);
             animator.SetBool("IsWalking", false);
             animator.SetBool("IsRunning", false);
+            animator.SetBool("IsCarrying", false);
             return;
         }
+
+
+        bool hasItem = playerCarrySystem != null &&
+                       playerCarrySystem.HasItem();
+
+        if (hasItem)
+        {
+            animator.SetBool("IsCarrying", true);
+
+
+            animator.SetBool("IsWalking", isWalking);
+
+
+            animator.SetBool("IsIdle", false);
+            animator.SetBool("IsRunning", false);
+
+            return;
+        }
+
+
+        animator.SetBool("IsCarrying", false);
 
         if (isRunning && isWalking)
         {

@@ -660,6 +660,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HoldDestroyableObject
   destroyTime: 2
   cleaningBar: {fileID: 8655008932427067295}
+  cleaningAction: 1
 --- !u!114 &1448552282077309741
 MonoBehaviour:
   m_ObjectHideFlags: 0
