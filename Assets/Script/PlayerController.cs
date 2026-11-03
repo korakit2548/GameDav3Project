@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float sanityRegenAmount = 0.1f;
     [SerializeField]
-    private float sanityRegenInterval = 5f;
+    private float sanityRegenInterval = 7f;
 
     private float sanityRegenTimer;
     private float sanityRegenBlockedUntil = float.NegativeInfinity;
