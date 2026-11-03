@@ -35,6 +35,7 @@ public sealed class GameOverSequence : MonoBehaviour
     private string mainMenuScene;
     private float elapsed;
     private bool started;
+    private bool soundStarted;
 
     public void Show(string menuSceneName = "MainMenu")
     {
@@ -61,6 +62,11 @@ public sealed class GameOverSequence : MonoBehaviour
         if (!started || black == null) return;
         elapsed += Mathf.Max(0f, unscaledDeltaTime);
         float fadeTime = Mathf.Max(0.01f, fadeDuration);
+        if (!soundStarted && elapsed >= fadeTime)
+        {
+            soundStarted = true;
+            if (deathAudio != null && deathAudio.clip != null) deathAudio.Play();
+        }
         float amount = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / fadeTime));
         black.color = new Color(0f, 0f, 0f, amount);
         foreach (var voice in ambience)
@@ -210,7 +216,6 @@ public sealed class GameOverSequence : MonoBehaviour
         deathAudio.priority = 16;
         deathAudio.volume = gameOverVolume;
         deathAudio.clip = gameOverClip != null ? gameOverClip : Resources.Load<AudioClip>("GameOver/GameOverSting");
-        if (deathAudio.clip != null) deathAudio.Play();
     }
 
     public void RestartGame()
