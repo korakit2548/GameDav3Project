@@ -8,11 +8,13 @@ public sealed class PlayerFootsteps : MonoBehaviour
     [Header("Step Timing")]
     [SerializeField, Min(0.1f)] private float stepDistance = 1.4f;
     [SerializeField, Min(0f)] private float minimumStepInterval = 0.18f;
+    [SerializeField, Min(0f)] private float carryingStepInterval = 0.65f;
     [SerializeField, Min(1f)] private float teleportDistance = 3f;
 
     [Header("Footstep Audio")]
     [SerializeField] private AudioClip[] footstepClips;
     [SerializeField, Range(0f, 1f)] private float footstepVolume = 0.65f;
+    [SerializeField, Range(0.5f, 1f)] private float carryingPitchMultiplier = 0.9f;
 
     [Header("Faint Shoe Prints")]
     [SerializeField] private Material footprintMaterial;
@@ -28,6 +30,7 @@ public sealed class PlayerFootsteps : MonoBehaviour
     private readonly RaycastHit[] groundHits = new RaycastHit[16];
     private readonly System.Random audioRandom = new System.Random();
     private Rigidbody body;
+    private PlayerCarrySystem carrySystem;
     private Collider bodyCollider;
     private AudioSource audioSource;
     private FootprintTrail trail;
@@ -41,6 +44,7 @@ public sealed class PlayerFootsteps : MonoBehaviour
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
+        carrySystem = GetComponent<PlayerCarrySystem>();
         bodyCollider = GetComponent<Collider>();
         previousPosition = transform.position;
         if (footstepClips == null || footstepClips.Length == 0)
@@ -93,7 +97,10 @@ public sealed class PlayerFootsteps : MonoBehaviour
         }
         travelledDistance += displacement.magnitude;
         float spacing = Mathf.Max(0.1f, stepDistance);
-        if (travelledDistance < spacing || timeSinceStep < minimumStepInterval) return;
+        float stepInterval = minimumStepInterval;
+        if (carrySystem != null && carrySystem.HasItem())
+            stepInterval = Mathf.Max(stepInterval, carryingStepInterval);
+        if (travelledDistance < spacing || timeSinceStep < stepInterval) return;
         travelledDistance %= spacing;
         if (EmitStep())
         {
@@ -114,6 +121,8 @@ public sealed class PlayerFootsteps : MonoBehaviour
                 clipIndex = (clipIndex + 1) % footstepClips.Length;
             previousClip = clipIndex;
             audioSource.pitch = 0.94f + (float)audioRandom.NextDouble() * 0.12f;
+            if (carrySystem != null && carrySystem.HasItem())
+                audioSource.pitch *= carryingPitchMultiplier;
             if (footstepClips[clipIndex] != null)
                 audioSource.PlayOneShot(footstepClips[clipIndex], footstepVolume);
         }
