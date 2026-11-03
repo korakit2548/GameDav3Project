@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
     private float sanityRegenInterval = 5f;
 
     private float sanityRegenTimer;
+    private float sanityRegenBlockedUntil = float.NegativeInfinity;
 
     [SerializeField]
     private GameObject HurtUI;
@@ -331,6 +332,7 @@ public class PlayerController : MonoBehaviour
 
         float previousSanity = currentSanity;
         currentSanity -= Mathf.Max(0f, sanityDamagePerHit);
+        sanityRegenBlockedUntil = Time.time + 1f;
 
         damageFeedback.ShowDamage();
         currentSanity = Mathf.Max(0f, currentSanity);
@@ -460,6 +462,8 @@ public class PlayerController : MonoBehaviour
             return;
 
         sanityRegenTimer += Time.deltaTime;
+        if (Time.time < sanityRegenBlockedUntil)
+            return;
 
         if (sanityRegenTimer >= sanityRegenInterval)
         {
