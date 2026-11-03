@@ -5,6 +5,12 @@ public class PlayerCarrySystem : MonoBehaviour
 {
     private string carriedItem;
 
+    [Header("Carry Visual")]
+    [SerializeField] private Transform carryPoint;
+    [SerializeField] private GameObject carriedBoxPrefab;
+
+    private GameObject currentCarriedObject;
+    
     public bool HasItem()
     {
         return !string.IsNullOrEmpty(carriedItem);
@@ -14,13 +20,27 @@ public class PlayerCarrySystem : MonoBehaviour
     {
         if (HasItem())
         {
-            Debug.Log("¤Ø³ÁÕÊÔè§¢Í§ÍÂÙèáÅéÇ");
+            Debug.Log("ï¿½Ø³ï¿½ï¿½ï¿½ï¿½è§¢Í§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             return false;
         }
 
         carriedItem = itemName;
+        if (carryPoint != null && carriedBoxPrefab != null)
+        {
+            currentCarriedObject = Instantiate(
+                carriedBoxPrefab,
+                carryPoint
+            );
 
-        Debug.Log("à¡çºÊÔè§¢Í§: " + carriedItem);
+            currentCarriedObject.transform.localPosition = Vector3.zero;
+            currentCarriedObject.transform.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            Debug.LogWarning("CarryPoint or CarriedBoxPrefab is missing!");
+        }
+        
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½è§¢Í§: " + carriedItem);
 
         return true;
     }
@@ -29,12 +49,18 @@ public class PlayerCarrySystem : MonoBehaviour
     {
         if (!HasItem())
         {
-            Debug.Log("¤Ø³äÁèÁÕÊÔè§¢Í§·Õè¨ÐÊè§");
+            Debug.Log("ï¿½Ø³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è§¢Í§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             return false;
         }
 
-        Debug.Log("Êè§ÊÔè§¢Í§ÊÓàÃç¨: " + carriedItem);
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½è§¢Í§ï¿½ï¿½ï¿½ï¿½ï¿½: " + carriedItem);
 
+        if (currentCarriedObject != null)
+        {
+            Destroy(currentCarriedObject);
+            currentCarriedObject = null;
+        }
+        
         carriedItem = null;
 
         return true;

@@ -7,11 +7,20 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
 
     [SerializeField]
     private CleaningBar cleaningBar;
+    
+    [SerializeField] private CleaningAction cleaningAction;
+
+    private CleaningController cleaningController;
 
     private float currentTime;
     private bool isHolding;
     private bool isDestroyed;
 
+    private void Awake()
+    {
+        cleaningController = FindFirstObjectByType<CleaningController>();
+    }
+    
     public void BeginHold()
     {
         if (isDestroyed)
@@ -21,8 +30,13 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
         isHolding = true;
 
         cleaningBar.SetProgress(0f);
+        
+        if (cleaningController != null)
+        {
+            cleaningController.StartCleaning(cleaningAction);
+        }
 
-        //Debug.Log("àÃÔèÁ·ÓÅÒÂ");
+        //Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
     }
 
     public void UpdateHold(float deltaTime)
@@ -51,7 +65,12 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
 
         cleaningBar.SetProgress(0f);
 
-        //Debug.Log("ËÂØ´·ÓÅÒÂ");
+        if (cleaningController != null)
+        {
+            cleaningController.StopCleaning();
+        }
+        
+        //Debug.Log("ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ï¿½");
     }
 
     private void DestroyObject()
@@ -62,6 +81,11 @@ public class HoldDestroyableObject : MonoBehaviour, IHoldInteractable
         isDestroyed = true;
         isHolding = false;
 
+        if (cleaningController != null)
+        {
+            cleaningController.StopCleaning();
+        }
+        
         CursedTrash cursedTrash = GetComponent<CursedTrash>();
 
         if (cursedTrash != null)

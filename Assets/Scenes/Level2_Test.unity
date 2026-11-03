@@ -1033,6 +1033,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 159677589}
   m_CullTransparentMesh: 1
+--- !u!1 &161427649
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 161427650}
+  m_Layer: 0
+  m_Name: Carry_box
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &161427650
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161427649}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.000000005587934, y: 0.00000006984918, z: 0.00000006262597, w: 1}
+  m_LocalPosition: {x: -0.5, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 274456839}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &200505279
 GameObject:
   m_ObjectHideFlags: 0
@@ -1701,19 +1732,30 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 7828146000a250e428a16e82d9fc5cd9, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 55e4f9f71e87cf64c8fbe79fff24ff7c, type: 2}
+      objectReference: {fileID: 9100000, guid: 7feef58dd286a4e40b8c71098e91f505, type: 2}
     - target: {fileID: 5866666021909216657, guid: 7828146000a250e428a16e82d9fc5cd9, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 2563496969622287784, guid: 7828146000a250e428a16e82d9fc5cd9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 470020525}
+    - targetCorrespondingSourceObject: {fileID: 2563496969622287784, guid: 7828146000a250e428a16e82d9fc5cd9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 161427650}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7828146000a250e428a16e82d9fc5cd9, type: 3}
 --- !u!4 &274456838 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7828146000a250e428a16e82d9fc5cd9, type: 3}
+  m_PrefabInstance: {fileID: 274456837}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &274456839 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2563496969622287784, guid: 7828146000a250e428a16e82d9fc5cd9, type: 3}
   m_PrefabInstance: {fileID: 274456837}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &287747029
@@ -2513,6 +2555,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10.745861, y: 4.546703, z: 7.291022}
   m_Center: {x: 0.3867693, y: 1.7733514, z: -0.16809106}
+--- !u!1 &470020524
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 470020525}
+  m_Layer: 0
+  m_Name: Item_Holding
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &470020525
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 470020524}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.40557995, y: 0.40557984, z: -0.5792279, w: -0.57922786}
+  m_LocalPosition: {x: 1, y: 2, z: 2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 274456839}
+  m_LocalEulerAnglesHint: {x: 0, y: 290, z: 90}
 --- !u!1 &474849502
 GameObject:
   m_ObjectHideFlags: 0
@@ -4972,6 +5045,7 @@ GameObject:
   - component: {fileID: 1133113448}
   - component: {fileID: 1133113453}
   - component: {fileID: 1133113454}
+  - component: {fileID: 1133113455}
   m_Layer: 6
   m_Name: player
   m_TagString: Untagged
@@ -5247,6 +5321,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 097abfa2592b25345803032c0c0b16c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCarrySystem
+  carryPoint: {fileID: 161427650}
+  carriedBoxPrefab: {fileID: 6267888996895870865, guid: 8ddffa7b77a94f744aba072301405c40, type: 3}
+--- !u!114 &1133113455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1133113447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fc525bdfa5e8e140a7fd464bc1e8348, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CleaningController
+  animator: {fileID: 923771248}
+  itemHolder: {fileID: 470020525}
+  broomPrefab: {fileID: 3143834379049732099, guid: 23c4411ff9851fb4286facd007ba4297, type: 3}
+  spongePrefab: {fileID: 6716511807064767184, guid: 885ca1158621648448de20ea0aecf0fd, type: 3}
 --- !u!1 &1135884004
 GameObject:
   m_ObjectHideFlags: 0

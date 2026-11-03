@@ -122,7 +122,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnInteract(InputAction.CallbackContext context)
     {
-        // µÃÇ¨ÊÍºÇèÒ Hold Interactable ¶Ù¡ Destroy ä»áÅéÇËÃ×ÍäÁè
+        // ï¿½ï¿½Ç¨ï¿½Íºï¿½ï¿½ï¿½ Hold Interactable ï¿½Ù¡ Destroy ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (currentHoldInteract is UnityEngine.Object holdObject &&
             holdObject == null)
         {
@@ -347,13 +347,36 @@ public class PlayerController : MonoBehaviour
     }
     private void Animation()
     {
+        
         if (isHoldingInteract)
         {
             animator.SetBool("IsIdle", true);
             animator.SetBool("IsWalking", false);
             animator.SetBool("IsRunning", false);
+            animator.SetBool("IsCarrying", false);
             return;
         }
+
+        
+        bool hasItem = playerCarrySystem != null &&
+                       playerCarrySystem.HasItem();
+
+        if (hasItem)
+        {
+            animator.SetBool("IsCarrying", true);
+
+           
+            animator.SetBool("IsWalking", isWalking);
+
+         
+            animator.SetBool("IsIdle", false);
+            animator.SetBool("IsRunning", false);
+
+            return;
+        }
+
+        
+        animator.SetBool("IsCarrying", false);
 
         if (isRunning && isWalking)
         {
